@@ -1,14 +1,12 @@
 package hackernews;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 
-import hackernews.JSONObject.News;
 import branch.hackernews.R;
+import hackernews.RetrieveFromAPI.RetrieveTopStoriesTask;
 
 public class HackerNews extends AppCompatActivity {
     public final String TAG = "HackerNews";
@@ -22,22 +20,28 @@ public class HackerNews extends AppCompatActivity {
         setContentView(R.layout.activity_news_stories);
 
         final AppState appState = new AppState()
-                .setNewsList((ListView) findViewById(R.id.news_list))
+                .setNewsList((ExpandableListView) findViewById(R.id.news_list))
                 .setContext(this);
 
         new RetrieveTopStoriesTask(appState).execute(TOP_STORY_URL);
 
-        appState.getNewsList().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        appState.getNewsList().setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                News selectedNews = appState.getShowNewsList().get(i);
-                Intent viewIntent = new Intent(HackerNews.this, ViewNewsPage.class);
-
-                viewIntent.putExtra("title", selectedNews.getTitle());
-                viewIntent.putExtra("url", selectedNews.getUrl());
-
-                startActivity(viewIntent);
+            public boolean onChildClick(ExpandableListView expandableListView, View view,
+                                        int groupPosition, int childPosition, long id) {
+                return false;
             }
+
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                Story selectedNews = appState.getShowStoryList().get(i);
+//                Intent viewIntent = new Intent(HackerNews.this, ViewNewsPage.class);
+//
+//                viewIntent.putExtra("title", selectedNews.getTitle());
+//                viewIntent.putExtra("url", selectedNews.getUrl());
+//
+//                startActivity(viewIntent);
+//            }
         });
     }
 }

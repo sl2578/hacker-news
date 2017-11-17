@@ -4,11 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="branch.hackernews.hackernews.hackernews.HackerNews">
+    tools:context="hackernews.HackerNews">
 
-    <ListView
+    <ExpandableListView
         android:id="@+id/news_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </ListView>
+        android:layout_height="match_parent" />
+
+    <!--<ListView-->
+        <!--android:id="@+id/news_list"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" >-->
+
+    <!--</ListView>-->
 </android.support.constraint.ConstraintLayout>

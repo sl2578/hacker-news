@@ -1,20 +1,28 @@
 package hackernews.JSONObject;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class News {
-    private String title;
+/**
+ *
+ */
+public class Story {
     private int id;
+    private String title;
     private String author;
     private String url;
+    private String descendants;
+    private JSONArray kids;
 
-    public News(JSONObject jsonObject) {
+    public Story(JSONObject jsonObject) {
         try {
             this.id = jsonObject.getInt("id");
             this.title = jsonObject.getString("title");
             this.author = jsonObject.getString("by");
             this.url = jsonObject.getString("url");
+            this.descendants = jsonObject.getString("descendants");
+            this.kids = jsonObject.getJSONArray("kids");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -36,5 +44,11 @@ public class News {
         return url;
     }
 
+    public String getDescendants() {
+        return descendants;
+    }
 
+    public JSONArray getKids() {
+        return kids;
+    }
 }

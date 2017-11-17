@@ -4,47 +4,117 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
 
-import hackernews.JSONObject.News;
+import hackernews.JSONObject.Story;
 import branch.hackernews.R;
 
-public class NewsAdapter extends BaseAdapter {
+public class NewsAdapter extends BaseExpandableListAdapter {
     private Context context;
     private LayoutInflater layoutInflater;
-    private List<News> dataSource;
+    private List<Story> storyRow;
+    private HashMap<Integer, List<String>> newsInfo;
 
-    public NewsAdapter(Context context, List<News> items) {
+
+    public NewsAdapter(Context context,
+                       List<Story> storyRow,
+                       HashMap<Integer,List<String>> newsInfo) {
         this.context = context;
-        this.dataSource = items;
-        this.layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.storyRow = storyRow;
+        this.newsInfo = newsInfo;
+        this.layoutInflater = (LayoutInflater)
+                this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
-    public int getCount() {
-        return this.dataSource.size();
+    public View getGroupView(int groupPosition,
+                             boolean isExpanded,
+                             View convertView,
+                             ViewGroup parent) {
+        Story story = (Story) getGroup(groupPosition);
+
+        if (convertView == null) {
+            convertView = layoutInflater.inflate(R.layout.news_row, null);
+        }
+
+        TextView title = convertView.findViewById(R.id.title);
+        title.setText(story.getTitle());
+
+        return convertView;
     }
 
     @Override
-    public Object getItem(int i) {
-        return this.dataSource.get(i);
+    public View getChildView(int groupPosition,
+                             int childPosition,
+                             boolean isLastChild,
+                             View convertView,
+                             ViewGroup parent) {
+        final String childText = (String) getChild(groupPosition, childPosition);
+
+        if (convertView == null) {
+            convertView = layoutInflater.inflate(R.layout.news_row_info, null);
+        }
+
+        TextView listText = convertView.findViewById(R.id.news_info);
+        listText.setText(childText);
+
+        return convertView;
     }
 
     @Override
-    public long getItemId(int i) {
-        return i;
+    public int getGroupCount() {
+        return this.storyRow.size();
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        View rowView = layoutInflater.inflate(R.layout.row, viewGroup, false);
-        TextView title = rowView.findViewById(R.id.title);
-        TextView text = rowView.findViewById(R.id.text);
-        title.setText(dataSource.get(i).getTitle());
-        text.setText(dataSource.get(i).getAuthor());
-        return rowView;
+    public int getChildrenCount(int groupPosition) {
+        return this.newsInfo.get(this.storyRow.get(groupPosition).getId()).size();
+    }
+
+    @Override
+    public Object getGroup(int groupPosition) {
+        return this.storyRow.get(groupPosition);
+    }
+
+    @Override
+    public Object getChild(int groupPosition, int childPosition) {
+        return this.newsInfo.get(this.storyRow.get(groupPosition).getId()).get(childPosition);
+    }
+
+    @Override
+    public long getGroupId(int groupPosition) {
+        return groupPosition;
+    }
+
+    @Override
+    public long getChildId(int groupPosition, int childPosition) {
+        return childPosition;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return false;
+    }
+
+
+
+    @Override
+    public boolean isChildSelectable(int groupPosition, int childPosition) {
+        return true;
     }
 }
+
+//
+//    @Override
+//    public View getView(int i, View view, ViewGroup viewGroup) {
+//        View rowView = layoutInflater.inflate(R.layout.news_row, viewGroup, false);
+//        TextView title = rowView.findViewById(R.id.title);
+//        TextView text = rowView.findViewById(R.id.text);
+//        title.setText(storyRow.get(i).getTitle());
+//        text.setText(storyRow.get(i).getAuthor());
+//        return rowView;
+//    }
