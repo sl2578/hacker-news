@@ -62,6 +62,11 @@ public class RetrieveTopStoriesTask extends RetrieveFromAPITask<AppState> {
         return appState;
     }
 
+    /**
+     * Retrieve news story from their respective API endpoint and deserialize the incoming json
+     * as {@link Story}
+     * @param storyUrl API Endpoint to get data for the specific story
+     */
     private void retrieveNewsStory(String storyUrl) {
         String input = null;
         try {
@@ -72,6 +77,7 @@ public class RetrieveTopStoriesTask extends RetrieveFromAPITask<AppState> {
 
         if (input == null) {
             Log.w(TAG, "Input stream from API endpoint is empty: " + storyUrl);
+            return;
         }
 
         try {

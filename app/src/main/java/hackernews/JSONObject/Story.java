@@ -1,14 +1,11 @@
 package hackernews.JSONObject;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Represents a story item in HackerNews API. The id is unique to the story and is the only
+ * required property.
  */
 public class Story {
     private int id;
@@ -17,8 +14,6 @@ public class Story {
     private String url;
     private int descendants;
     private List<Integer> kids = new ArrayList<>();
-
-    public Story() {}
 
     public String getTitle() {
         return title;

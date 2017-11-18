@@ -3,8 +3,6 @@ package hackernews.RetrieveFromAPI;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import java.io.IOException;
 
 import hackernews.AppState;
@@ -18,7 +16,6 @@ import hackernews.Utils;
 abstract class RetrieveFromAPITask<T> extends AsyncTask<String, Void, T> {
     public final String TAG = "RetrieveFromAPI";
 
-    private final Gson gson = new Gson();
     private final AppState appState;
 
     public RetrieveFromAPITask(final AppState appState) {
@@ -39,7 +36,7 @@ abstract class RetrieveFromAPITask<T> extends AsyncTask<String, Void, T> {
         }
 
         if (input != null) {
-            return gson.fromJson(input, getRetrievedClass());
+            return Utils.loadJSON(input, getRetrievedClass());
         } else {
             Log.w(TAG, "Input stream from API endpoint is empty");
             return null;
