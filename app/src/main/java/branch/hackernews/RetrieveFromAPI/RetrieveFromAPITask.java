@@ -1,12 +1,12 @@
-package hackernews.RetrieveFromAPI;
+package branch.hackernews.RetrieveFromAPI;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
 
-import hackernews.AppState;
-import hackernews.Utils;
+import branch.hackernews.AppState;
+import branch.hackernews.Utils;
 
 /**
  * Abstract class to retrieve JSON data from HackerNews API and parse the JSON into object T
@@ -14,7 +14,7 @@ import hackernews.Utils;
  * @param <T> The object type that the JSON data is parsed as
  */
 abstract class RetrieveFromAPITask<T> extends AsyncTask<String, Void, T> {
-    public final String TAG = "RetrieveFromAPI";
+    public final String TAG = RetrieveFromAPITask.class.getName();
 
     private final AppState appState;
 
@@ -30,9 +30,10 @@ abstract class RetrieveFromAPITask<T> extends AsyncTask<String, Void, T> {
     protected T doInBackground(String... urls) {
         String input = null;
         try {
+            Log.i(TAG, "Fetching resource from URL: %s" + urls[0]);
             input = urls == null || urls.length == 0 ? null : Utils.readInputFromURL(urls[0]);
         } catch (IOException e) {
-            Log.e(TAG, "Failed to download top news stories from Hacker News: " + urls[0], e);
+            Log.e(TAG, "Failed to get data from Hacker News: " + urls[0], e);
         }
 
         if (input != null) {

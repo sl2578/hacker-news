@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="branch.hackernews.hackernews.hackernews.ViewComments">
+    tools:context="branch.hackernews.pages.ViewComments">
 
 </android.support.constraint.ConstraintLayout>

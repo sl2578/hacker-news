@@ -1,6 +1,4 @@
-package hackernews;
-
-import android.util.Log;
+package branch.hackernews;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -13,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
-    public static final String TAG = "Utils";
+    public static final String TAG = Utils.class.getName();
     private static Gson gson = new Gson();
 
     /**
@@ -23,7 +21,6 @@ public class Utils {
      * @throws IOException when url string is incorrect or there's no response from the connection
      */
     public static String readInputFromURL(String urlString) throws IOException {
-        Log.i(TAG, "Fetching resource from URL: %s" + urlString);
         URL url = new URL(urlString);
         return IOUtils.toString(url, "UTF-8");
     }

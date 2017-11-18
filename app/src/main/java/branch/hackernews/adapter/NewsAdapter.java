@@ -1,4 +1,4 @@
-package hackernews;
+package branch.hackernews.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,12 +7,11 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import branch.hackernews.R;
-import hackernews.JSONObject.Story;
+import branch.hackernews.JSONObject.Story;
 
 public class NewsAdapter extends BaseExpandableListAdapter {
     private Context context;

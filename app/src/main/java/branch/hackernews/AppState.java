@@ -1,13 +1,13 @@
-package hackernews;
+package branch.hackernews;
 
 import android.content.Context;
-import android.widget.ExpandableListView;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import hackernews.JSONObject.Story;
+import branch.hackernews.JSONObject.Story;
 
 public class AppState {
 
@@ -18,7 +18,7 @@ public class AppState {
 
     protected List<Integer> topStories = new ArrayList<>();
     protected List<Story> showStoryList = Collections.synchronizedList(new ArrayList<Story>());
-    protected ExpandableListView newsList;
+    protected View view;
     protected Context context;
 
     public void addNews(Story story) {
@@ -29,13 +29,13 @@ public class AppState {
         return showStoryList;
     }
 
-    public AppState setNewsList(final ExpandableListView newsList) {
-        this.newsList = newsList;
+    public AppState setView(final View view) {
+        this.view = view;
         return this;
     }
 
-    public ExpandableListView getNewsList() {
-        return newsList;
+    public View getView() {
+        return view;
     }
 
     public Context getContext() {

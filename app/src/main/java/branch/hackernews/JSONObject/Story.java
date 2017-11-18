@@ -1,4 +1,4 @@
-package hackernews.JSONObject;
+package branch.hackernews.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;

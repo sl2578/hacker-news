@@ -1,4 +1,4 @@
-package hackernews;
+package branch.hackernews;
 
 import com.google.gson.JsonSyntaxException;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import hackernews.JSONObject.Story;
+import branch.hackernews.JSONObject.Story;
 
 @RunWith(RobolectricTestRunner.class)
 public class TestUtils {
