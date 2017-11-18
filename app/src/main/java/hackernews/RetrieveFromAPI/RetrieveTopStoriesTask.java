@@ -2,9 +2,13 @@ package hackernews.RetrieveFromAPI;
 
 import android.util.Log;
 
+import com.google.gson.JsonSyntaxException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import hackernews.AppState;
 import hackernews.HackerNews;
@@ -14,18 +18,33 @@ import hackernews.Utils;
 
 /**
  * Retrieve top stories list from the HackerNews /topstories endpoint and retrieve each story info
- * to store as a Story object in {@link AppState.showNewsList}
+ * to store as a Story object
  */
-public class RetrieveTopStoriesTask extends RetrieveFromAPITask<List> {
-
+public class RetrieveTopStoriesTask extends RetrieveFromAPITask<AppState> {
+    Map<Integer, List<String>> newsInfo = new HashMap<>();
+    List<String> newsInfoText = new ArrayList<>();
     public RetrieveTopStoriesTask(AppState appState) {
         super(appState);
+        // Initialize newsInfoText list
+        newsInfoText.add("View Article");
+        newsInfoText.add("View User");
+        newsInfoText.add("View Comments");
     }
 
     @Override
-    protected List doInBackground(String... urls) {
+    protected AppState doInBackground(String... urls) {
         AppState appState = getAppState();
-        String input = urls == null || urls.length == 0 ? null : Utils.readInputFromURL(urls[0]);
+        String input = null;
+        try {
+            input = urls == null || urls.length == 0 ? null : Utils.readInputFromURL(urls[0]);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to download top news stories from Hacker News: " + urls[0], e);
+        }
+
+        if (input == null) {
+            Log.w(TAG, "Input stream from API endpoint is empty: " + urls[0]);
+            return null;
+        }
 
         // Gson handles integer inputs as doubles, so convert to integer list
         //noinspection unchecked
@@ -40,27 +59,33 @@ public class RetrieveTopStoriesTask extends RetrieveFromAPITask<List> {
             retrieveNewsStory(storyUrl);
         }
 
-        return newsIds;
+        return appState;
     }
 
     private void retrieveNewsStory(String storyUrl) {
-        String input = Utils.readInputFromURL(storyUrl);
-        if (input != null) {
+        String input = null;
+        try {
+            input = Utils.readInputFromURL(storyUrl);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to download top news stories from Hacker News: " + storyUrl, e);
+        }
+
+        if (input == null) {
+            Log.w(TAG, "Input stream from API endpoint is empty: " + storyUrl);
+        }
+
+        try {
             Story story = Utils.loadJSON(input, Story.class);
             Log.i(TAG, "Adding story to list: " + story.getTitle());
             this.getAppState().addNews(story);
+        } catch (JsonSyntaxException e) {
+            Log.e(TAG, "Unable to parse input as JSON" + input, e);
         }
-
     }
 
     @Override
-    protected void executeOnRetrieved(final List newsObjects, final AppState appState) {
-        Log.i(TAG, "Story list: " + appState.getShowStoryList());
-        HashMap<Integer, List<String>> newsInfo = new HashMap<>();
-        List<String> newsInfoText = new ArrayList<>();
-        newsInfoText.add("View Article");
-        newsInfoText.add("View User");
-        newsInfoText.add("View Comments");
+    protected void onPostExecute(final AppState appState) {
+        Log.i(TAG, "Top news stories retrieved, displaying " + appState.getShowStoryList().size());
         for (Story story : appState.getShowStoryList()) {
             newsInfo.put(story.getId(), newsInfoText);
         }
@@ -69,8 +94,8 @@ public class RetrieveTopStoriesTask extends RetrieveFromAPITask<List> {
     }
 
     @Override
-    protected Class<List> getRetrievedClass() {
-        return List.class;
+    protected Class<AppState> getRetrievedClass() {
+        return AppState.class;
     }
 
 }

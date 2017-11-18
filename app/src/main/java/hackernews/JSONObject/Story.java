@@ -4,29 +4,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  */
 public class Story {
     private int id;
     private String title;
-    private String author;
+    private String by;
     private String url;
-    private String descendants;
-    private JSONArray kids;
+    private int descendants;
+    private List<Integer> kids = new ArrayList<>();
 
-    public Story(JSONObject jsonObject) {
-        try {
-            this.id = jsonObject.getInt("id");
-            this.title = jsonObject.getString("title");
-            this.author = jsonObject.getString("by");
-            this.url = jsonObject.getString("url");
-            this.descendants = jsonObject.getString("descendants");
-            this.kids = jsonObject.getJSONArray("kids");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+    public Story() {}
 
     public String getTitle() {
         return title;
@@ -36,19 +28,19 @@ public class Story {
         return id;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getUser() {
+        return by;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public String getDescendants() {
+    public int getNumDescendants() {
         return descendants;
     }
 
-    public JSONArray getKids() {
+    public List<Integer> getKids() {
         return kids;
     }
 }

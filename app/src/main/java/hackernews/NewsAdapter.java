@@ -9,20 +9,21 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import hackernews.JSONObject.Story;
 import branch.hackernews.R;
+import hackernews.JSONObject.Story;
 
 public class NewsAdapter extends BaseExpandableListAdapter {
     private Context context;
     private LayoutInflater layoutInflater;
     private List<Story> storyRow;
-    private HashMap<Integer, List<String>> newsInfo;
+    private Map<Integer, List<String>> newsInfo;
 
 
     public NewsAdapter(Context context,
                        List<Story> storyRow,
-                       HashMap<Integer,List<String>> newsInfo) {
+                       Map<Integer, List<String>> newsInfo) {
         this.context = context;
         this.storyRow = storyRow;
         this.newsInfo = newsInfo;

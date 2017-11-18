@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.io.IOException;
+
 import hackernews.AppState;
 import hackernews.Utils;
 
@@ -29,7 +31,12 @@ abstract class RetrieveFromAPITask<T> extends AsyncTask<String, Void, T> {
 
     @Override
     protected T doInBackground(String... urls) {
-        String input = urls == null || urls.length == 0 ? null : Utils.readInputFromURL(urls[0]);
+        String input = null;
+        try {
+            input = urls == null || urls.length == 0 ? null : Utils.readInputFromURL(urls[0]);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to download top news stories from Hacker News: " + urls[0], e);
+        }
 
         if (input != null) {
             return gson.fromJson(input, getRetrievedClass());
@@ -39,13 +46,12 @@ abstract class RetrieveFromAPITask<T> extends AsyncTask<String, Void, T> {
         }
     }
 
-    @Override
-    protected void onPostExecute(final T returnObject) {
-        executeOnRetrieved(returnObject, this.appState);
-    }
+    protected abstract void onPostExecute(final T returnObject);
 
+//        executeOnRetrieved(returnObject, this.appState);
+    // TODO: Do we need this?
     /** Once data is retrieved from the API, save into {@link AppState} */
-    protected abstract void executeOnRetrieved(final T retrieved, final AppState appState);
+//    protected abstract void executeOnRetrieved(final T retrieved, final AppState appState);
 
     /** Define the class the JSON data will be retrieved as */
     protected abstract Class<T> getRetrievedClass();

@@ -16,15 +16,29 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'commons-io:commons-io:2.6'
+
+    // Testing
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile 'com.google.code.gson:gson:2.8.2'
-    compile 'commons-io:commons-io:2.6'
+    // Unit Testing with Robolectric
+    testCompile "org.powermock:powermock-module-junit4:1.7.1"
+    testCompile "org.powermock:powermock-module-junit4-rule:1.6.4"
+    testCompile "org.powermock:powermock-api-mockito:1.6.4"
+    testCompile "org.powermock:powermock-classloading-xstream:1.6.4"
+    testImplementation "org.robolectric:robolectric:3.5.1"
 }
