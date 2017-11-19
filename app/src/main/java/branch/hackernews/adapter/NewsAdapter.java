@@ -100,8 +100,6 @@ public class NewsAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
-
-
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;

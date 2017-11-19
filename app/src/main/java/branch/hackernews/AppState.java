@@ -7,17 +7,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import branch.hackernews.JSONObject.Comment;
 import branch.hackernews.JSONObject.Story;
 
 public class AppState {
-
-
-    public void setTopStories(List<Integer> topStories) {
-        this.topStories = topStories;
-    }
-
-    protected List<Integer> topStories = new ArrayList<>();
+    protected List<Integer> idsList = new ArrayList<>();
     protected List<Story> showStoryList = Collections.synchronizedList(new ArrayList<Story>());
+    protected List<Comment> showCommentsList = Collections.synchronizedList(new ArrayList<Comment>());
     protected View view;
     protected Context context;
 
@@ -29,13 +25,21 @@ public class AppState {
         return showStoryList;
     }
 
-    public AppState setView(final View view) {
-        this.view = view;
-        return this;
+    public void addComment(Comment comment) {
+        showCommentsList.add(comment);
+    }
+
+    public List<Comment> getShowCommentsList() {
+        return showCommentsList;
     }
 
     public View getView() {
         return view;
+    }
+
+    public AppState setView(final View view) {
+        this.view = view;
+        return this;
     }
 
     public Context getContext() {
@@ -47,7 +51,12 @@ public class AppState {
         return this;
     }
 
-    public List<Integer> getTopStories() {
-        return topStories;
+    public List<Integer> getIdsList() {
+        return idsList;
+    }
+
+    public AppState setIdsList(List<Integer> idsList) {
+        this.idsList = idsList;
+        return this;
     }
 }

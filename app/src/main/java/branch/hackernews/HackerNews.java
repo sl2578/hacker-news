@@ -3,8 +3,11 @@ package branch.hackernews;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
+
+import java.util.ArrayList;
 
 import branch.hackernews.JSONObject.Story;
 import branch.hackernews.pages.ViewComments;
@@ -39,17 +42,22 @@ public class HackerNews extends AppCompatActivity {
                 Intent intent = null;
                 switch(selectedChild) {
                     case "View Article":
+                        Log.i(TAG, "Opening story in browser: " + selectedNews.getTitle());
                         intent = new Intent(appState.getContext(), ViewNewsPage.class);
+                        // TODO: replace hardcoded name with variable
                         intent.putExtra("title", selectedNews.getTitle());
                         intent.putExtra("url", selectedNews.getUrl());
                         break;
                     case "View User":
+                        Log.i(TAG, "View user info: " + selectedNews.getUser());
                         intent = new Intent(appState.getContext(), ViewUser.class);
                         intent.putExtra("user", selectedNews.getUser());
                         break;
                     case "View Comments":
-                        // TODO
+                        Log.i(TAG, "View comments for " + selectedNews.getTitle());
                         intent = new Intent(appState.getContext(), ViewComments.class);
+                        intent.putIntegerArrayListExtra("comments", (ArrayList<Integer>) selectedNews.getKids());
+                        intent.putExtra("title", selectedNews.getTitle());
                         break;
                 }
                 startActivity(intent);

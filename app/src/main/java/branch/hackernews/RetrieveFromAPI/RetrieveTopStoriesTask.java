@@ -5,7 +5,6 @@ import android.widget.ExpandableListView;
 
 import com.google.gson.JsonSyntaxException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +13,8 @@ import java.util.Map;
 import branch.hackernews.AppState;
 import branch.hackernews.HackerNews;
 import branch.hackernews.JSONObject.Story;
-import branch.hackernews.adapter.NewsAdapter;
 import branch.hackernews.Utils;
+import branch.hackernews.adapter.NewsAdapter;
 
 /**
  * Retrieve top stories list from the HackerNews /topstories endpoint and retrieve each story info
@@ -36,13 +35,7 @@ public class RetrieveTopStoriesTask extends RetrieveFromAPITask<AppState> {
     @Override
     protected AppState doInBackground(String... urls) {
         AppState appState = getAppState();
-        String input = null;
-        try {
-            Log.i(TAG, "Fetching resource from URL: " + urls[0]);
-            input = urls == null || urls.length == 0 ? null : Utils.readInputFromURL(urls[0]);
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to download top news stories from Hacker News: " + urls[0] + " " + e.getMessage(), e);
-        }
+        String input = Utils.fetchResource(TAG, urls[0]);
 
         if (input == null) {
             Log.w(TAG, "Input stream from API endpoint is empty: " + urls[0]);
@@ -54,7 +47,7 @@ public class RetrieveTopStoriesTask extends RetrieveFromAPITask<AppState> {
         final List<Double> storyIdsDouble = Utils.loadJSON(input, List.class);
         final List<Integer> newsIds = Utils.convertDoubleToIntegerList(storyIdsDouble);
 
-        appState.setTopStories(newsIds);
+        appState.setIdsList(newsIds);
 
         for (final int storyId : newsIds.subList(0,2)) {
             Log.i(TAG, "Getting story " + storyId);
@@ -71,13 +64,7 @@ public class RetrieveTopStoriesTask extends RetrieveFromAPITask<AppState> {
      * @param storyUrl API Endpoint to get data for the specific story
      */
     private void retrieveNewsStory(String storyUrl) {
-        String input = null;
-        try {
-            Log.i(TAG, "Fetching resource from URL: %s" + storyUrl);
-            input = Utils.readInputFromURL(storyUrl);
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to download top news stories from Hacker News: " + storyUrl, e);
-        }
+        String input = Utils.fetchResource(TAG, storyUrl);
 
         if (input == null) {
             Log.w(TAG, "Input stream from API endpoint is empty: " + storyUrl);
@@ -92,7 +79,6 @@ public class RetrieveTopStoriesTask extends RetrieveFromAPITask<AppState> {
             Log.e(TAG, "Unable to parse input as JSON" + input, e);
         }
     }
-
     @Override
     protected void onPostExecute(final AppState appState) {
         Log.i(TAG, "Top news stories retrieved, displaying " + appState.getShowStoryList().size());

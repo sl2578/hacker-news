@@ -10,6 +10,7 @@ import java.util.Date;
 import branch.hackernews.R;
 import branch.hackernews.AppState;
 import branch.hackernews.JSONObject.User;
+import branch.hackernews.Utils;
 import branch.hackernews.pages.ViewUser;
 
 public class RetrieveUserTask extends RetrieveFromAPITask<User> {
@@ -32,17 +33,12 @@ public class RetrieveUserTask extends RetrieveFromAPITask<User> {
         TextView about = viewUser.findViewById(R.id.about);
 
         user_name.setText(user.getId());
-        created_date.setText(unixToTime(user.getCreated()));
+        created_date.setText(Utils.unixToTime(user.getCreated()));
         karma_points.setText(String.valueOf(user.getKarma()));
         about.setText(user.getAbout());
     }
 
-    private String unixToTime(Integer unixTimeStamp) {
-        Date now = new Date();
-        CharSequence relativeDateTimeString = DateUtils.getRelativeTimeSpanString(unixTimeStamp, now.getTime(), DateUtils.SECOND_IN_MILLIS,
-                DateUtils.FORMAT_ABBREV_RELATIVE);
-        return relativeDateTimeString.toString();
-    }
+
 
     @Override
     protected Class<User> getRetrievedClass() {

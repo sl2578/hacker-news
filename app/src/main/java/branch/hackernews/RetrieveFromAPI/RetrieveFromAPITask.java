@@ -46,11 +46,6 @@ abstract class RetrieveFromAPITask<T> extends AsyncTask<String, Void, T> {
 
     protected abstract void onPostExecute(final T returnObject);
 
-//        executeOnRetrieved(returnObject, this.appState);
-    // TODO: Do we need this?
-    /** Once data is retrieved from the API, save into {@link AppState} */
-//    protected abstract void executeOnRetrieved(final T retrieved, final AppState appState);
-
     /** Define the class the JSON data will be retrieved as */
     protected abstract Class<T> getRetrievedClass();
 }

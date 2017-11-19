@@ -1,5 +1,8 @@
 package branch.hackernews;
 
+import android.text.format.DateUtils;
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -8,10 +11,10 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Utils {
-    public static final String TAG = Utils.class.getName();
     private static Gson gson = new Gson();
 
     /**
@@ -48,5 +51,34 @@ public class Utils {
             newList.add(s.intValue());
         }
         return newList;
+    }
+
+    /**
+     * Fetch resource from url as string
+     * @param tag TAG for logging
+     * @param url URL to connect to get the resource
+     * @return String containing resource attained from url
+     */
+    public static String fetchResource(String tag, String url) {
+        String input = null;
+        try {
+            Log.i(tag, "Fetching resource from URL: %s" + url);
+            input = url == null ? null : Utils.readInputFromURL(url);
+        } catch (IOException e) {
+            Log.e(tag, "Failed to download top news stories from Hacker News: " + url, e);
+        }
+        return input;
+    }
+
+    /**
+     * Get how much time passed since the input unix timestamp
+     * @param unixTimeStamp Initial time to calculate the time "since"
+     * @return String containing how "long ago" the input timestamp was
+     */
+    public static String unixToTime(Integer unixTimeStamp) {
+        Date now = new Date();
+        CharSequence relativeDateTimeString = DateUtils.getRelativeTimeSpanString(unixTimeStamp, now.getTime(), DateUtils.SECOND_IN_MILLIS,
+                DateUtils.FORMAT_ABBREV_RELATIVE);
+        return relativeDateTimeString.toString();
     }
 }

@@ -6,4 +6,8 @@
     android:layout_height="match_parent"
     tools:context="branch.hackernews.pages.ViewComments">
 
+    <ExpandableListView
+        android:id="@+id/comments_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </android.support.constraint.ConstraintLayout>
