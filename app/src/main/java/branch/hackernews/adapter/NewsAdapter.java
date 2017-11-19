@@ -1,6 +1,7 @@
 package branch.hackernews.adapter;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,7 @@ public class NewsAdapter extends BaseExpandableListAdapter {
         }
 
         TextView title = convertView.findViewById(R.id.title);
-        title.setText(story.getTitle());
+        title.setText(Html.fromHtml(story.getTitle()));
 
         return convertView;
     }

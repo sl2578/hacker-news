@@ -74,4 +74,12 @@ public class TestUtils {
         List<Integer> result = Utils.convertDoubleToIntegerList(input);
         Assert.assertTrue(result.get(0) instanceof Integer);
     }
+
+    @Test
+    public void testTimeSince() {
+        long past = 1479909334;
+        long current = 1511123547041;
+        String timeSince = Utils.timeSince(current, past);
+        Assert.assertEquals("14 minutes ago", timeSince);
+    }
 }

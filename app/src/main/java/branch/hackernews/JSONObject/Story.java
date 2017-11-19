@@ -3,6 +3,8 @@ package branch.hackernews.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
+
 /**
  * Represents a story item in HackerNews API. The id is unique to the story and is the only
  * required property.
@@ -16,7 +18,7 @@ public class Story {
     private List<Integer> kids = new ArrayList<>();
 
     public String getTitle() {
-        return title;
+        return unescapeHtml4(title);
     }
 
     public int getId() {

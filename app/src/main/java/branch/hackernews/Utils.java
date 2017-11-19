@@ -72,13 +72,11 @@ public class Utils {
 
     /**
      * Get how much time passed since the input unix timestamp
-     * @param unixTimeStamp Initial time to calculate the time "since"
+     * @param past Initial time to calculate the time "since"
+     * @param now Time to calculate to
      * @return String containing how "long ago" the input timestamp was
      */
-    public static String unixToTime(Integer unixTimeStamp) {
-        Date now = new Date();
-        CharSequence relativeDateTimeString = DateUtils.getRelativeTimeSpanString(unixTimeStamp, now.getTime(), DateUtils.SECOND_IN_MILLIS,
-                DateUtils.FORMAT_ABBREV_RELATIVE);
-        return relativeDateTimeString.toString();
+    public static String timeSince(long due, long now) {
+        return DateUtils.getRelativeTimeSpanString(due, now, DateUtils.SECOND_IN_MILLIS).toString();
     }
 }

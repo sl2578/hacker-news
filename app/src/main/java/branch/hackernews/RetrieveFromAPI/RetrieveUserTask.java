@@ -1,15 +1,12 @@
 package branch.hackernews.RetrieveFromAPI;
 
-import android.text.format.DateUtils;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
-import java.util.Date;
 
-import branch.hackernews.R;
 import branch.hackernews.AppState;
 import branch.hackernews.JSONObject.User;
+import branch.hackernews.R;
 import branch.hackernews.Utils;
 import branch.hackernews.pages.ViewUser;
 
@@ -33,7 +30,7 @@ public class RetrieveUserTask extends RetrieveFromAPITask<User> {
         TextView about = viewUser.findViewById(R.id.about);
 
         user_name.setText(user.getId());
-        created_date.setText(Utils.unixToTime(user.getCreated()));
+        created_date.setText(Utils.timeSince(user.getCreated(), System.currentTimeMillis()/1000));
         karma_points.setText(String.valueOf(user.getKarma()));
         about.setText(user.getAbout());
     }

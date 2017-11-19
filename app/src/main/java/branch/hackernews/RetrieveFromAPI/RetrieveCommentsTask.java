@@ -49,10 +49,12 @@ public class RetrieveCommentsTask  extends RetrieveFromAPITask<AppState> {
     @Override
     protected void onPostExecute(AppState appState) {
         Log.i(TAG, "Comments retrieved, displaying " + appState.getShowCommentsList().size());
-        Map<Integer, List<Integer>> commentResponses = new HashMap<>();
+        Map<Integer, String> commentResponses = new HashMap<>();
 
         for (Comment comment : appState.getShowCommentsList()) {
-            commentResponses.put(comment.getId(), comment.getKids());
+            if (comment.getKids() != null && comment.getKids().size() > 0) {
+                commentResponses.put(comment.getId(), "View Replies");
+            }
         }
         ((ExpandableListView) appState.getView()).setAdapter(
                 new CommentsAdapter(appState.getContext(), appState.getShowCommentsList(), commentResponses));

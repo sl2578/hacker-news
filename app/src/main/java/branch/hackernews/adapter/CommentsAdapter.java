@@ -1,24 +1,18 @@
 package branch.hackernews.adapter;
 
 import android.content.Context;
-import android.util.Log;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
-import branch.hackernews.AppState;
-import branch.hackernews.HackerNews;
 import branch.hackernews.JSONObject.Comment;
 import branch.hackernews.R;
-import branch.hackernews.RetrieveFromAPI.RetrieveCommentRepliesTask;
-import branch.hackernews.RetrieveFromAPI.RetrieveCommentsTask;
 import branch.hackernews.Utils;
 
 public class CommentsAdapter extends BaseExpandableListAdapter {
@@ -26,12 +20,12 @@ public class CommentsAdapter extends BaseExpandableListAdapter {
 
     private Context context;
     private List<Comment> comments;
-    private Map<Integer, List<Integer>> commentResponses;
+    private Map<Integer, String> commentResponses;
     private LayoutInflater layoutInflater;
 
     public CommentsAdapter(Context context,
                            List<Comment> comments,
-                           Map<Integer, List<Integer>> commentResponses) {
+                           Map<Integer, String> commentResponses) {
         this.context = context;
         this.comments = comments;
         this.commentResponses = commentResponses;
@@ -46,8 +40,11 @@ public class CommentsAdapter extends BaseExpandableListAdapter {
                              ViewGroup parent) {
         Comment comment = (Comment) getGroup(groupPosition);
 
-        if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.comments_row, null);
+        if (isExpanded) {
+            convertView = layoutInflater.inflate(R.layout.comments_row_full, null);
+        }
+        else {
+            convertView = layoutInflater.inflate(R.layout.comments_row_shortened, null);
         }
 
         TextView user = convertView.findViewById(R.id.user);
@@ -55,9 +52,10 @@ public class CommentsAdapter extends BaseExpandableListAdapter {
         TextView comment_text = convertView.findViewById(R.id.comment_text);
 
         user.setText(comment.getBy());
-        created_date.setText(Utils.unixToTime(comment.getTime()));
-        //TODO: html escaping
-        comment_text.setText(comment.getText());
+        created_date.setText(Utils.timeSince(comment.getTime(), System.currentTimeMillis()/1000));
+        if (comment.getText() != null) {
+            comment_text.setText(Html.fromHtml(comment.getText()));
+        }
 
         return convertView;
     }
@@ -68,20 +66,26 @@ public class CommentsAdapter extends BaseExpandableListAdapter {
                              boolean isLastChild,
                              View convertView,
                              ViewGroup parent) {
-        Comment comment = (Comment) getGroup(groupPosition);
+        final String childText = (String) getChild(groupPosition, childPosition);
 
-        final AppState appState = new AppState()
-                .setView(convertView)
-                .setIdsList(Collections.singletonList(comment.getKids().get(childPosition)))
-                .setContext(this.context);
-
-        try {
-            new RetrieveCommentRepliesTask(appState, convertView).execute(HackerNews.GET_STORY_URL).get();
-        } catch (InterruptedException e) {
-            Log.e(TAG, "Interrupted while retrieving comment replies for " + comment.getId());
-        } catch (ExecutionException e) {
-            Log.e(TAG, "Error while retrieving comment replies for " + comment.getId(), e);
+        if (convertView == null) {
+            convertView = layoutInflater.inflate(R.layout.comments_row_info, null);
         }
+        TextView viewMoreText = convertView.findViewById(R.id.comment_info);
+        viewMoreText.setText(childText);
+
+//        final AppState appState = new AppState()
+//                .setView(convertView)
+//                .setIdsList(Collections.singletonList(comment.getKids().get(childPosition)))
+//                .setContext(this.context);
+
+//        try {
+//            new RetrieveCommentRepliesTask(appState, convertView).execute(HackerNews.GET_STORY_URL).get();
+//        } catch (InterruptedException e) {
+//            Log.e(TAG, "Interrupted while retrieving comment replies for " + comment.getId());
+//        } catch (ExecutionException e) {
+//            Log.e(TAG, "Error while retrieving comment replies for " + comment.getId(), e);
+//        }
 
         return convertView;
 
@@ -94,7 +98,7 @@ public class CommentsAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.commentResponses.get(this.comments.get(groupPosition).getId()).size();
+        return this.commentResponses.containsKey(this.comments.get(groupPosition).getId()) ? 1 : 0;
     }
 
     @Override
@@ -104,7 +108,7 @@ public class CommentsAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return this.commentResponses.get(this.comments.get(groupPosition).getId()).get(childPosition);
+        return this.commentResponses.get(this.comments.get(groupPosition).getId());
     }
 
     @Override

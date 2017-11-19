@@ -30,6 +30,7 @@ dependencies {
 
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'commons-io:commons-io:2.6'
+    compile 'org.apache.commons:commons-lang3:3.6'
 
     // Testing
     testImplementation 'junit:junit:4.12'
