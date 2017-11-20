@@ -1,5 +1,6 @@
 package branch.hackernews.RetrieveFromAPI;
 
+import android.text.format.DateUtils;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
@@ -22,7 +23,7 @@ public class RetrieveUserTask extends RetrieveFromAPITask<User> {
     protected void onPostExecute(User user) {
         ViewUser viewUser = viewUserWeakReference.get();
         if (viewUser == null) {
-            // Log error
+            // TODO: Log error
         }
         TextView user_name = viewUser.findViewById(R.id.user);
         TextView created_date = viewUser.findViewById(R.id.created_date);
@@ -30,12 +31,11 @@ public class RetrieveUserTask extends RetrieveFromAPITask<User> {
         TextView about = viewUser.findViewById(R.id.about);
 
         user_name.setText(user.getId());
-        created_date.setText(Utils.timeSince(user.getCreated(), System.currentTimeMillis()/1000));
+        created_date.setText(Utils.timeSince(
+                DateUtils.SECOND_IN_MILLIS * user.getCreated(), System.currentTimeMillis()));
         karma_points.setText(String.valueOf(user.getKarma()));
         about.setText(user.getAbout());
     }
-
-
 
     @Override
     protected Class<User> getRetrievedClass() {

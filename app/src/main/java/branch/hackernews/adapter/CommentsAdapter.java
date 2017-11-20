@@ -2,6 +2,7 @@ package branch.hackernews.adapter;
 
 import android.content.Context;
 import android.text.Html;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,8 @@ public class CommentsAdapter extends BaseExpandableListAdapter {
         TextView comment_text = convertView.findViewById(R.id.comment_text);
 
         user.setText(comment.getBy());
-        created_date.setText(Utils.timeSince(comment.getTime(), System.currentTimeMillis()/1000));
+        created_date.setText(Utils.timeSince(
+                DateUtils.SECOND_IN_MILLIS * comment.getTime(), System.currentTimeMillis()));
         if (comment.getText() != null) {
             comment_text.setText(Html.fromHtml(comment.getText()));
         }

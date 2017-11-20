@@ -12,10 +12,20 @@ import branch.hackernews.JSONObject.Story;
 
 public class AppState {
     protected List<Integer> idsList = new ArrayList<>();
+    protected int idsListIndex;
     protected List<Story> showStoryList = Collections.synchronizedList(new ArrayList<Story>());
     protected List<Comment> showCommentsList = Collections.synchronizedList(new ArrayList<Comment>());
     protected View view;
     protected Context context;
+
+    public AppState setIdsListIndex(int idsListIndex) {
+        this.idsListIndex = idsListIndex;
+        return this;
+    }
+
+    public int getIdsListIndex() {
+        return idsListIndex;
+    }
 
     public void addNews(Story story) {
         showStoryList.add(story);

@@ -14,6 +14,8 @@ public class Story {
     private String title;
     private String by;
     private String url;
+    private int score;
+    private int time;
     private int descendants;
     private List<Integer> kids = new ArrayList<>();
 
@@ -40,4 +42,13 @@ public class Story {
     public List<Integer> getKids() {
         return kids;
     }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
 }

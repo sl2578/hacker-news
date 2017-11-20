@@ -1,6 +1,7 @@
 package branch.hackernews.RetrieveFromAPI;
 
 import android.text.Html;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -26,7 +27,8 @@ public class RetrieveCommentRepliesTask extends RetrieveCommentsTask {
         TextView comment_text = parentView.findViewById(R.id.comment_text);
 
         user.setText(comment.getBy());
-        created_date.setText(Utils.timeSince(comment.getTime(), System.currentTimeMillis()/1000));
+        created_date.setText(Utils.timeSince(
+                DateUtils.SECOND_IN_MILLIS * comment.getTime(), System.currentTimeMillis()));
         comment_text.setText(Html.fromHtml(comment.getText()));
     }
 }

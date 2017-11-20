@@ -11,7 +11,6 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Utils {
@@ -73,10 +72,10 @@ public class Utils {
     /**
      * Get how much time passed since the input unix timestamp
      * @param past Initial time to calculate the time "since"
-     * @param now Time to calculate to
+     * @param current Time to calculate to
      * @return String containing how "long ago" the input timestamp was
      */
-    public static String timeSince(long due, long now) {
-        return DateUtils.getRelativeTimeSpanString(due, now, DateUtils.SECOND_IN_MILLIS).toString();
+    public static String timeSince(long past, long current) {
+        return DateUtils.getRelativeTimeSpanString(past, current, 0).toString();
     }
 }

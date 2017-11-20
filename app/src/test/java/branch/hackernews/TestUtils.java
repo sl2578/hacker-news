@@ -10,6 +10,7 @@ import org.robolectric.RobolectricTestRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import branch.hackernews.JSONObject.Story;
 
@@ -77,9 +78,21 @@ public class TestUtils {
 
     @Test
     public void testTimeSince() {
-        long past = 1479909334;
-        long current = 1511123547041;
-        String timeSince = Utils.timeSince(current, past);
-        Assert.assertEquals("14 minutes ago", timeSince);
+        long current = TimeUnit.SECONDS.toMillis(1511130483);
+
+        long past = current - TimeUnit.SECONDS.toMillis(5);
+        Assert.assertEquals("5 seconds ago", Utils.timeSince(past, current));
+
+        past = current - TimeUnit.MINUTES.toMillis(14);
+        Assert.assertEquals("14 minutes ago", Utils.timeSince(past, current));
+
+        past = current - TimeUnit.DAYS.toMillis(2);
+        Assert.assertEquals("2 days ago", Utils.timeSince(past, current));
+
+        past = current - TimeUnit.DAYS.toMillis(6);
+        Assert.assertEquals("6 days ago", Utils.timeSince(past, current));
+
+        past = current - TimeUnit.DAYS.toMillis(7);
+        Assert.assertEquals("7 days ago", Utils.timeSince(past, current));
     }
 }

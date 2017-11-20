@@ -2,6 +2,7 @@ package branch.hackernews.adapter;
 
 import android.content.Context;
 import android.text.Html;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,9 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Map;
 
-import branch.hackernews.R;
 import branch.hackernews.JSONObject.Story;
+import branch.hackernews.R;
+import branch.hackernews.Utils;
 
 public class NewsAdapter extends BaseExpandableListAdapter {
     private Context context;
@@ -31,6 +33,18 @@ public class NewsAdapter extends BaseExpandableListAdapter {
                 this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    static class GroupViewHolder {
+        public TextView title;
+        public TextView score;
+        public TextView user;
+        public TextView date;
+        public TextView descendants;
+    }
+
+    static class ChildViewHolder {
+        public TextView viewReplies;
+    }
+
     @Override
     public View getGroupView(int groupPosition,
                              boolean isExpanded,
@@ -40,10 +54,23 @@ public class NewsAdapter extends BaseExpandableListAdapter {
 
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.news_row, null);
+            GroupViewHolder viewHolder = new GroupViewHolder();
+            viewHolder.title = convertView.findViewById(R.id.title);
+            viewHolder.score = convertView.findViewById(R.id.score);
+            viewHolder.user = convertView.findViewById(R.id.user);
+            viewHolder.date = convertView.findViewById(R.id.date);
+            viewHolder.descendants = convertView.findViewById(R.id.descendants);
+            convertView.setTag(viewHolder);
         }
 
-        TextView title = convertView.findViewById(R.id.title);
-        title.setText(Html.fromHtml(story.getTitle()));
+        GroupViewHolder holder = (GroupViewHolder) convertView.getTag();
+
+        holder.title.setText(Html.fromHtml(story.getTitle()));
+        holder.score.setText(String.valueOf(story.getScore()));
+        holder.user.setText(story.getUser());
+        holder.date.setText(Utils.timeSince(
+                DateUtils.SECOND_IN_MILLIS * story.getTime(), System.currentTimeMillis()));
+        holder.descendants.setText(String.valueOf(story.getNumDescendants()));
 
         return convertView;
     }
@@ -58,10 +85,13 @@ public class NewsAdapter extends BaseExpandableListAdapter {
 
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.news_row_info, null);
+            ChildViewHolder viewHolder = new ChildViewHolder();
+            viewHolder.viewReplies = convertView.findViewById(R.id.news_info);
+            convertView.setTag(viewHolder);
         }
 
-        TextView listText = convertView.findViewById(R.id.news_info);
-        listText.setText(childText);
+        ChildViewHolder holder = (ChildViewHolder) convertView.getTag();
+        holder.viewReplies.setText(childText);
 
         return convertView;
     }

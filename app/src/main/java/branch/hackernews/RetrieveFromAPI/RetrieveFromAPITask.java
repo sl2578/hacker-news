@@ -30,7 +30,7 @@ abstract class RetrieveFromAPITask<T> extends AsyncTask<String, Void, T> {
     protected T doInBackground(String... urls) {
         String input = null;
         try {
-            Log.i(TAG, "Fetching resource from URL: %s" + urls[0]);
+            Log.i(TAG, "Fetching resource from URL: " + urls[0]);
             input = urls == null || urls.length == 0 ? null : Utils.readInputFromURL(urls[0]);
         } catch (IOException e) {
             Log.e(TAG, "Failed to get data from Hacker News: " + urls[0], e);

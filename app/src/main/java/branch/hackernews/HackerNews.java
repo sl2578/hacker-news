@@ -10,6 +10,8 @@ import android.widget.ExpandableListView;
 import java.util.ArrayList;
 
 import branch.hackernews.JSONObject.Story;
+import branch.hackernews.RetrieveFromAPI.RetrieveNewsStoryTask;
+import branch.hackernews.adapter.InfiniteScrollListener;
 import branch.hackernews.pages.ViewComments;
 import branch.hackernews.pages.ViewUser;
 import branch.hackernews.RetrieveFromAPI.RetrieveTopStoriesTask;
@@ -25,18 +27,27 @@ public class HackerNews extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_stories);
-
         final AppState appState = new AppState()
                 .setView(findViewById(R.id.news_list))
                 .setContext(this);
 
         new RetrieveTopStoriesTask(appState).execute(TOP_STORY_URL);
 
-        ((ExpandableListView) appState.getView()).setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        ((ExpandableListView) appState.getView()).setOnScrollListener(new InfiniteScrollListener() {
+            @Override
+            public boolean loadMore(int page, int totalItemCount) {
+                Log.i(TAG, "Loading more stories, current story count: " + totalItemCount);
+                new RetrieveNewsStoryTask(appState).execute(GET_STORY_URL);
+                return true;
+            }
+        });
+
+        ((ExpandableListView) appState.getView()).setOnChildClickListener(
+                new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view,
                                         int groupPosition, int childPosition, long id) {
-                final String selectedChild = (String) ((ExpandableListView) appState.getView())
+                final String selectedChild = (String) expandableListView
                         .getExpandableListAdapter().getChild(groupPosition, childPosition);
                 Story selectedNews = appState.getShowStoryList().get(groupPosition);
                 Intent intent = null;
