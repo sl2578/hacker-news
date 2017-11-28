@@ -61,7 +61,7 @@ public class Utils {
     public static String fetchResource(String tag, String url) {
         String input = null;
         try {
-            Log.i(tag, "Fetching resource from URL: %s" + url);
+            Log.i(tag, "Fetching resource from URL: " + url);
             input = url == null ? null : Utils.readInputFromURL(url);
         } catch (IOException e) {
             Log.e(tag, "Failed to download top news stories from Hacker News: " + url, e);

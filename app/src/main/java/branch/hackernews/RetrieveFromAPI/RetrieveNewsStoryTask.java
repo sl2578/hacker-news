@@ -1,84 +1,76 @@
 package branch.hackernews.RetrieveFromAPI;
 
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ExpandableListView;
 
-import com.google.gson.JsonSyntaxException;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import branch.hackernews.AppState;
+import branch.hackernews.HackerNews;
 import branch.hackernews.JSONObject.Story;
 import branch.hackernews.Utils;
-import branch.hackernews.adapter.NewsAdapter;
 
-public class RetrieveNewsStoryTask extends RetrieveFromAPITask<AppState> {
-    private static int LOAD_NUM_ITEM = 15;
+public class RetrieveNewsStoryTask extends AsyncTask<Void, Void, Map<Integer, String>> {
+    public final String TAG = RetrieveNewsStoryTask.class.getName();
 
-    Map<Integer, List<String>> newsInfo = new HashMap<>();
+    Activity mainActivity;
+    private List<Integer> topStoryIds;
+    private String url;
+    private int offset;
+    private int maxLoadSize = 15;
 
-    List<String> newsInfoText = new ArrayList<>();
-    public RetrieveNewsStoryTask(AppState appState) {
-        super(appState);
-        // Initialize newsInfoText list
-        newsInfoText.add("View Article");
-        newsInfoText.add("View User");
-        newsInfoText.add("View Comments");
+
+    public RetrieveNewsStoryTask(HackerNews hackerNews, List<Integer> topStoryIds, String url, int offset) {
+        super();
+        this.mainActivity = hackerNews;
+        this.topStoryIds = topStoryIds;
+        this.url = url;
+        this.offset = offset;
     }
 
     @Override
-    protected AppState doInBackground(String... urls) {
-        AppState appState = getAppState();
-        List<Integer> topStoryIds = appState.getIdsList();
-        int offset = appState.getIdsListIndex();
+    protected Map<Integer, String> doInBackground(Void... params) {
+        Map<Integer, String> storyJsons = new HashMap<>();
+        int upperLimit =  Math.min(offset + maxLoadSize, topStoryIds.size());
 
-        //TODO: deal with out of bounds
-        for (final int storyId : topStoryIds.subList(offset, offset + LOAD_NUM_ITEM)) {
-            String storyUrl = String.format(urls[0], storyId);
-            retrieveNewsStory(storyUrl);
+        for (final int storyId : topStoryIds.subList(offset, upperLimit)) {
+            storyJsons.put(storyId, retrieveNewsStory(storyId));
         }
-        appState.setIdsListIndex(offset + LOAD_NUM_ITEM);
 
-        return appState;
+        return storyJsons;
     }
 
     @Override
-    protected void onPostExecute(AppState appState) {
-        Log.i(TAG, "Top news stories retrieved, displaying " + appState.getShowStoryList().size());
-        for (Story story : appState.getShowStoryList()) {
-            newsInfo.put(story.getId(), newsInfoText);
-        }
-        ((ExpandableListView) appState.getView()).setAdapter(
-                new NewsAdapter(appState.getContext(), appState.getShowStoryList(), newsInfo));
-    }
-
-    @Override
-    protected Class<AppState> getRetrievedClass() {
-        return null;
+    protected void onPostExecute(Map<Integer, String> storyJsons) {
+        ((HackerNews) mainActivity).loadStoriesFromJSON(storyJsons);
     }
 
     /**
      * Retrieve news story from their respective API endpoint and deserialize the incoming json
      * as {@link Story}
-     * @param storyUrl API Endpoint to get data for the specific story
+     * @param storyId id of story to retrieve from API endpoint
      */
-    protected void retrieveNewsStory(String storyUrl) {
+    protected String retrieveNewsStory(int storyId) {
+        String storyUrl = String.format(url, storyId);
         String input = Utils.fetchResource(TAG, storyUrl);
+
+        Log.d(TAG, "StoryId: " + storyId + ": " + input);
 
         if (input == null) {
             Log.w(TAG, "Input stream from API endpoint is empty: " + storyUrl);
-            return;
+            return null;
         }
 
-        try {
-            Story story = Utils.loadJSON(input, Story.class);
-            Log.i(TAG, "Adding story to list: " + story.getTitle());
-            this.getAppState().addNews(story);
-        } catch (JsonSyntaxException e) {
-            Log.e(TAG, "Unable to parse input as JSON" + input, e);
-        }
+        return input;
+    }
+
+
+    /**
+     * Set max number of stories to load from HackerNews API
+     */
+    public void setMaxLoadSize(int maxLoadSize) {
+        this.maxLoadSize = maxLoadSize;
     }
 }

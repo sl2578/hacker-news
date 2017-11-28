@@ -13,6 +13,7 @@ import branch.hackernews.JSONObject.Story;
 public class AppState {
     protected List<Integer> idsList = new ArrayList<>();
     protected int idsListIndex;
+    protected int currentFirstVisibleItem;
     protected List<Story> showStoryList = Collections.synchronizedList(new ArrayList<Story>());
     protected List<Comment> showCommentsList = Collections.synchronizedList(new ArrayList<Comment>());
     protected View view;
@@ -22,6 +23,16 @@ public class AppState {
         this.idsListIndex = idsListIndex;
         return this;
     }
+
+
+    public int getCurrentFirstVisibleItem() {
+        return currentFirstVisibleItem;
+    }
+
+    public void setCurrentFirstVisibleItem(int currentFirstVisibleItem) {
+        this.currentFirstVisibleItem = currentFirstVisibleItem;
+    }
+
 
     public int getIdsListIndex() {
         return idsListIndex;
