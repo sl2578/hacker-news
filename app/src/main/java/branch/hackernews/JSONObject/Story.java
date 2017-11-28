@@ -8,7 +8,7 @@ import java.util.List;
 import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
 
 /**
- * Represents a story item in HackerNews API. The id is unique to the story and is the only
+ * Represents a story item in HackerNewsMainActivity API. The id is unique to the story and is the only
  * required property.
  */
 public class Story {

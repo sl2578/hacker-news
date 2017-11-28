@@ -1,6 +1,5 @@
 package branch.hackernews;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,8 +28,8 @@ import branch.hackernews.pages.ViewComments;
 import branch.hackernews.pages.ViewNewsPage;
 import branch.hackernews.pages.ViewUser;
 
-public class HackerNews extends AppCompatActivity {
-    private final String TAG = HackerNews.class.getName();
+public class HackerNewsMainActivity extends AppCompatActivity {
+    private final String TAG = HackerNewsMainActivity.class.getName();
 
     public final static String TITLE_FIELD = "title";
     public final static String URL_FIELD = "url";
@@ -40,7 +39,7 @@ public class HackerNews extends AppCompatActivity {
     private ExpandableListView expandableListView;
     private StoryAdapter storyAdapter;
 
-    // Complete list of top story ids from HackerNews
+    // Complete list of top story ids from HackerNewsMainActivity
     private List<Integer> topStoryIds = new ArrayList<>();
     // List of stories to display
     private List<Story> topStories;
@@ -59,12 +58,6 @@ public class HackerNews extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_stories);
 
-        ProgressDialog dialog=new ProgressDialog(this);
-        dialog.setMessage("Loading top stories from Hacker News API!");
-        dialog.setCancelable(false);
-        dialog.setInverseBackgroundForced(false);
-        dialog.show();
-
         // Initialize newsInfoText list
         Log.i(TAG, "Initializing news info text");
         initializeNewsInfoText();
@@ -78,7 +71,6 @@ public class HackerNews extends AppCompatActivity {
         expandableListView = findViewById(R.id.news_list);
         setListAdapterView();
         getStoryFromHackerNews();
-        dialog.hide();
         expandableListView.setOnScrollListener(onScrollListener());
         expandableListView.setOnChildClickListener(onChildClickListener());
     }

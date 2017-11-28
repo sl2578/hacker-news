@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import branch.hackernews.HackerNews;
+import branch.hackernews.HackerNewsMainActivity;
 import branch.hackernews.JSONObject.Comment;
 import branch.hackernews.R;
 import branch.hackernews.RetrieveFromAPI.RetrieveCommentsTask;
@@ -25,7 +25,7 @@ import branch.hackernews.api.HackerNewsAPIInterface;
 
 /**
  * Activity containing {@link ExpandableListView} of {@link Comment} objects.
- * Called by either {@link HackerNews} or itself to load comments associated
+ * Called by either {@link HackerNewsMainActivity} or itself to load comments associated
  * with the Hacker News API items (i.e. Story, Comments)
  */
 public class ViewComments extends AppCompatActivity {
@@ -47,11 +47,11 @@ public class ViewComments extends AppCompatActivity {
 
         apiService = HackerNewsAPIClient.getClient();
 
-        // Get intent as sent from either HackerNews or ViewComments
+        // Get intent as sent from either HackerNewsMainActivity or ViewComments
         Intent intent = getIntent();
-        title = intent.getStringExtra(HackerNews.TITLE_FIELD);
+        title = intent.getStringExtra(HackerNewsMainActivity.TITLE_FIELD);
         setTitle("Comments for " + title);
-        commentIds = intent.getIntegerArrayListExtra(HackerNews.COMMENTS_FIELD);
+        commentIds = intent.getIntegerArrayListExtra(HackerNewsMainActivity.COMMENTS_FIELD);
 
         expandableListView = findViewById(R.id.comments_list);
         setListAdapterView();
@@ -82,9 +82,9 @@ public class ViewComments extends AppCompatActivity {
                 Log.i(TAG, "Showing comments for " + comment.getId());
 
                 Intent intent = new Intent(context, ViewComments.class);
-                intent.putIntegerArrayListExtra(HackerNews.COMMENTS_FIELD,
+                intent.putIntegerArrayListExtra(HackerNewsMainActivity.COMMENTS_FIELD,
                         (ArrayList<Integer>) comment.getKids());
-                intent.putExtra(HackerNews.TITLE_FIELD, title);
+                intent.putExtra(HackerNewsMainActivity.TITLE_FIELD, title);
                 startActivity(intent);
                 return true;
             }

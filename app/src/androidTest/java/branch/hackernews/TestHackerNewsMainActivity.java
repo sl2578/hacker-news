@@ -28,13 +28,13 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
 /**
- * Tests for {@link HackerNews}
+ * Tests for {@link HackerNewsMainActivity}
  */
 @RunWith(AndroidJUnit4.class)
-public class TestHackerNews {
+public class TestHackerNewsMainActivity {
     @Rule
-    public ActivityTestRule<HackerNews> hackerNewsActivityRule =
-            new ActivityTestRule<>(HackerNews.class);
+    public ActivityTestRule<HackerNewsMainActivity> hackerNewsActivityRule =
+            new ActivityTestRule<>(HackerNewsMainActivity.class);
 
     @Test
     public void testInitialView() {

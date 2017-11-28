@@ -13,13 +13,13 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Map;
 
-import branch.hackernews.HackerNews;
+import branch.hackernews.HackerNewsMainActivity;
 import branch.hackernews.JSONObject.Story;
 import branch.hackernews.R;
 import branch.hackernews.Utils;
 
 /**
- * Adapter class for {@link HackerNews} to display the {@link Story} objects
+ * Adapter class for {@link HackerNewsMainActivity} to display the {@link Story} objects
  * in an {@link ExpandableListView}
  */
 public class StoryAdapter extends BaseExpandableListAdapter {

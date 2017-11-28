@@ -37,7 +37,7 @@ public class RetrieveCommentsTask extends AsyncTask<Void, Void, Map<Integer, Com
             try {
                 commentsMap.put(commentId, retrieveComment(commentId));
             } catch (IOException e) {
-                Log.w(TAG, "Unable to retrieve comment from HackerNews API: "
+                Log.w(TAG, "Unable to retrieve comment from HackerNewsMainActivity API: "
                         + commentId);
             }
         }

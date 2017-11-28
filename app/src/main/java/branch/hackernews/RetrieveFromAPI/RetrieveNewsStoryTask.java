@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import branch.hackernews.HackerNews;
+import branch.hackernews.HackerNewsMainActivity;
 import branch.hackernews.JSONObject.Story;
 import branch.hackernews.api.HackerNewsAPIInterface;
 import retrofit2.Call;
@@ -23,12 +23,12 @@ public class RetrieveNewsStoryTask extends AsyncTask<Void, Void, Map<Integer, St
     private final HackerNewsAPIInterface apiService;
     private int maxLoadSize = 15;
 
-    public RetrieveNewsStoryTask(HackerNews hackerNews,
+    public RetrieveNewsStoryTask(HackerNewsMainActivity hackerNewsMainActivity,
                                  List<Integer> topStoryIds,
                                  int offset,
                                  HackerNewsAPIInterface apiService) {
         super();
-        this.mainActivity = hackerNews;
+        this.mainActivity = hackerNewsMainActivity;
         this.topStoryIds = topStoryIds;
         this.offset = offset;
         this.apiService = apiService;
@@ -43,7 +43,7 @@ public class RetrieveNewsStoryTask extends AsyncTask<Void, Void, Map<Integer, St
             try {
                 storyMap.put(storyId, retrieveNewsStory(storyId));
             } catch (IOException e) {
-                Log.w(TAG, "Unable to retrieve story from HackerNews API: "
+                Log.w(TAG, "Unable to retrieve story from HackerNewsMainActivity API: "
                         + storyId);
             }
         }
@@ -53,7 +53,7 @@ public class RetrieveNewsStoryTask extends AsyncTask<Void, Void, Map<Integer, St
 
     @Override
     protected void onPostExecute(Map<Integer, Story> storyJsons) {
-        ((HackerNews) mainActivity).loadStories(storyJsons);
+        ((HackerNewsMainActivity) mainActivity).loadStories(storyJsons);
     }
 
     /**
@@ -68,7 +68,7 @@ public class RetrieveNewsStoryTask extends AsyncTask<Void, Void, Map<Integer, St
     }
 
     /**
-     * Set max number of stories to load from HackerNews API
+     * Set max number of stories to load from HackerNewsMainActivity API
      */
     public void setMaxLoadSize(int maxLoadSize) {
         this.maxLoadSize = maxLoadSize;

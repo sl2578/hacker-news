@@ -11,7 +11,7 @@ import branch.hackernews.api.HackerNewsAPIInterface;
 import retrofit2.Call;
 
 /**
- * Retrieve top stories list from the HackerNews /topstories endpoint and retrieve each story info
+ * Retrieve top stories list from the HackerNewsMainActivity /topstories endpoint and retrieve each story info
  * to store as a Story object
  */
 public class RetrieveTopStoriesTask extends AsyncTask<Void, Void, List<Integer>> {

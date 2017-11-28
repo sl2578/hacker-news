@@ -8,7 +8,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.TextView;
 
-import branch.hackernews.HackerNews;
+import branch.hackernews.HackerNewsMainActivity;
 import branch.hackernews.JSONObject.User;
 import branch.hackernews.R;
 import branch.hackernews.RetrieveFromAPI.RetrieveUserTask;
@@ -38,7 +38,7 @@ public class ViewUser extends AppCompatActivity {
         apiService = HackerNewsAPIClient.getClient();
 
         Intent intent = getIntent();
-        final String user = intent.getStringExtra(HackerNews.USER_FIELD);
+        final String user = intent.getStringExtra(HackerNewsMainActivity.USER_FIELD);
 
         Log.i(TAG, "Retrieving user data for " + user);
 
