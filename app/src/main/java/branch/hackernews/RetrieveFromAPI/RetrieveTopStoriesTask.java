@@ -3,10 +3,12 @@ package branch.hackernews.RetrieveFromAPI;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import branch.hackernews.Utils;
+import branch.hackernews.api.HackerRankAPIInterface;
+import retrofit2.Call;
 
 /**
  * Retrieve top stories list from the HackerNews /topstories endpoint and retrieve each story info
@@ -16,25 +18,23 @@ public class RetrieveTopStoriesTask extends AsyncTask<Void, Void, List<Integer>>
     public final String TAG = RetrieveTopStoriesTask.class.getName();
 
     String url;
+    HackerRankAPIInterface apiService;
 
-    public RetrieveTopStoriesTask(String url) {
+    public RetrieveTopStoriesTask(String url, HackerRankAPIInterface apiService) {
         this.url = url;
+        this.apiService = apiService;
     }
 
     @Override
     protected List<Integer> doInBackground(Void... params) {
-        String json = Utils.fetchResource(TAG, url);
+        Call<List<Integer>> call = apiService.getTopStories();
 
-        if (json == null) {
-            Log.w(TAG, "Input stream from API endpoint is empty: " + url);
+        try {
+            return call.execute().body();
+        } catch (IOException e) {
+            Log.w(TAG, "Failed to get top stories from API");
             return Collections.emptyList();
         }
-
-        // Gson handles integer inputs as doubles, so convert to integer list
-        final List<Double> storyIdsDouble = Utils.loadJSON(json, List.class);
-        final List<Integer> newsIds = Utils.convertDoubleToIntegerList(storyIdsDouble);
-
-        return newsIds;
     }
 
     @Override
