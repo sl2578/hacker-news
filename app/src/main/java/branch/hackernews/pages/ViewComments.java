@@ -50,7 +50,7 @@ public class ViewComments extends AppCompatActivity {
         // Get intent as sent from either HackerNews or ViewComments
         Intent intent = getIntent();
         title = intent.getStringExtra(HackerNews.TITLE_FIELD);
-        setTitle(title);
+        setTitle("Comments for " + title);
         commentIds = intent.getIntegerArrayListExtra(HackerNews.COMMENTS_FIELD);
 
         expandableListView = findViewById(R.id.comments_list);

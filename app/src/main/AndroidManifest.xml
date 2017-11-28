@@ -9,20 +9,22 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Hacker News"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="branch.hackernews.HackerNews">
+        <activity android:name=".HackerNews">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="branch.hackernews.pages.ViewComments" />
-        <activity android:name="branch.hackernews.pages.ViewNewsPage" />
-        <activity android:name="branch.hackernews.pages.ViewUser"/>
+        <activity android:name=".pages.ViewComments" />
+        <activity android:name=".pages.ViewNewsPage" />
+        <activity
+            android:name=".pages.ViewUser"
+            android:label="Profile" />
     </application>
 
 </manifest>

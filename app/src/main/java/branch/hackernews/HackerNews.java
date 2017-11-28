@@ -1,5 +1,6 @@
 package branch.hackernews;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -48,7 +49,8 @@ public class HackerNews extends AppCompatActivity {
     // Keep track of last retrieved story index
     private int offset = 0;
     // Three options for view more
-    private List<String> storyInfoText;
+    private List<String> storyInfoTextWithComments;
+    private List<String> storyInfoTextWithOutComments;
 
     private HackerNewsAPIInterface apiService;
 
@@ -56,6 +58,12 @@ public class HackerNews extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_stories);
+
+        ProgressDialog dialog=new ProgressDialog(this);
+        dialog.setMessage("Loading top stories from Hacker News API!");
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.show();
 
         // Initialize newsInfoText list
         Log.i(TAG, "Initializing news info text");
@@ -70,6 +78,7 @@ public class HackerNews extends AppCompatActivity {
         expandableListView = findViewById(R.id.news_list);
         setListAdapterView();
         getStoryFromHackerNews();
+        dialog.hide();
         expandableListView.setOnScrollListener(onScrollListener());
         expandableListView.setOnChildClickListener(onChildClickListener());
     }
@@ -152,14 +161,19 @@ public class HackerNews extends AppCompatActivity {
     }
 
     private void initializeNewsInfoText() {
-        storyInfoText = new ArrayList<>();
-        storyInfoText.add("View Article");
-        storyInfoText.add("View User");
+        storyInfoTextWithOutComments = new ArrayList<>();
+        storyInfoTextWithOutComments.add("View Article");
+        storyInfoTextWithOutComments.add("View User");
+
+        storyInfoTextWithComments = new ArrayList<>(storyInfoTextWithOutComments);
+        storyInfoTextWithComments.add("View Comments");
     }
 
     /**
-     * Given a map of story id to json,
-     * @param stories
+     * Called by {@link RetrieveNewsStoryTask} to load the {@link Story} object and it's child options.
+     * Only show "View Comments" when a story has comments
+     *
+     * @param stories map containing story id as key and story object
      */
     public void loadStories(Map<Integer, Story> stories) {
         final int numStories = stories.size();
@@ -168,15 +182,10 @@ public class HackerNews extends AppCompatActivity {
         offset += numStories;
         for (Map.Entry<Integer, Story> storyEntry : stories.entrySet()) {
             Story story = storyEntry.getValue();
-            List<String> infoText = new ArrayList<>(storyInfoText);
-
-            // Only add View Comments option if story has comments
-            if (story.getNumDescendants() > 0) {
-                infoText.add("View Comments");
-            }
-
             topStories.add(story);
-            storyInfo.put(storyEntry.getKey(), infoText);
+            storyInfo.put(storyEntry.getKey(),
+                    story.getNumDescendants() > 0 ?
+                            storyInfoTextWithComments : storyInfoTextWithOutComments);
         }
 
         Log.i(TAG, "Top news stories retrieved, displaying " + topStories.size());
