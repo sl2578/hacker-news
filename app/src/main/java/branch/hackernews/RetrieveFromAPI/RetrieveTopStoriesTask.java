@@ -17,11 +17,9 @@ import retrofit2.Call;
 public class RetrieveTopStoriesTask extends AsyncTask<Void, Void, List<Integer>> {
     public final String TAG = RetrieveTopStoriesTask.class.getName();
 
-    String url;
-    HackerRankAPIInterface apiService;
+    private final HackerRankAPIInterface apiService;
 
-    public RetrieveTopStoriesTask(String url, HackerRankAPIInterface apiService) {
-        this.url = url;
+    public RetrieveTopStoriesTask(HackerRankAPIInterface apiService) {
         this.apiService = apiService;
     }
 

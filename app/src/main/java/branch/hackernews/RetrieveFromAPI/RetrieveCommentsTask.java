@@ -1,67 +1,56 @@
 package branch.hackernews.RetrieveFromAPI;
 
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ExpandableListView;
 
-import com.google.gson.JsonSyntaxException;
-
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import branch.hackernews.AppState;
 import branch.hackernews.JSONObject.Comment;
-import branch.hackernews.Utils;
-import branch.hackernews.adapter.CommentsAdapter;
+import branch.hackernews.api.HackerRankAPIInterface;
+import branch.hackernews.pages.ViewComments;
+import retrofit2.Call;
 
-public class RetrieveCommentsTask  extends RetrieveFromAPITask<AppState> {
+public class RetrieveCommentsTask extends AsyncTask<Void, Void, Map<Integer, Comment>> {
+    private final String TAG = RetrieveCommentsTask.class.getName();
 
-    public RetrieveCommentsTask(AppState appState) {
-        super(appState);
+    private final Activity parentActivity;
+    private final List<Integer> commentIds;
+    private final HackerRankAPIInterface apiService;
+
+
+    public RetrieveCommentsTask(ViewComments viewCommentsActivity,
+                                HackerRankAPIInterface apiService,
+                                List<Integer> commentIds) {
+        this.parentActivity = viewCommentsActivity;
+        this.apiService = apiService;
+        this.commentIds = commentIds;
     }
 
     @Override
-    protected AppState doInBackground(String... urls) {
-        List<Integer> commentIds = this.getAppState().getIdsList();
+    protected Map<Integer, Comment> doInBackground(Void... voids) {
+        Map<Integer, Comment> commentsMap = new HashMap<>();
         for (int commentId : commentIds) {
-            String url = String.format(urls[0], commentId);
-            retrieveComment(url);
-        }
-        return getAppState();
-    }
-
-    private void retrieveComment(String url) {
-        String input = Utils.fetchResource(TAG, url);
-
-        if (input == null) {
-            Log.w(TAG, "Input stream from API endpoint is empty: " + url);
-            return;
-        }
-
-        try {
-            Comment comment = Utils.loadJSON(input, Comment.class);
-            this.getAppState().addComment(comment);
-        } catch (JsonSyntaxException e) {
-            Log.e(TAG, "Unable to parse input as JSON" + input, e);
-        }
-    }
-
-    @Override
-    protected void onPostExecute(AppState appState) {
-        Log.i(TAG, "Comments retrieved, displaying " + appState.getShowCommentsList().size());
-        Map<Integer, String> commentResponses = new HashMap<>();
-
-        for (Comment comment : appState.getShowCommentsList()) {
-            if (comment.getKids() != null && comment.getKids().size() > 0) {
-                commentResponses.put(comment.getId(), "View Replies");
+            try {
+                commentsMap.put(commentId, retrieveComment(commentId));
+            } catch (IOException e) {
+                Log.w(TAG, "Unable to retrieve comment from HackerNews API: "
+                        + commentId);
             }
         }
-        ((ExpandableListView) appState.getView()).setAdapter(
-                new CommentsAdapter(appState.getContext(), appState.getShowCommentsList(), commentResponses));
+        return commentsMap;
     }
 
     @Override
-    protected Class<AppState> getRetrievedClass() {
-        return null;
+    protected void onPostExecute(Map<Integer, Comment> commentsMap) {
+        ((ViewComments) parentActivity).loadComments(commentsMap);
+    }
+
+    private Comment retrieveComment(int commentId) throws IOException {
+        Call<Comment> call = apiService.getComment(commentId);
+        return call.execute().body();
     }
 }

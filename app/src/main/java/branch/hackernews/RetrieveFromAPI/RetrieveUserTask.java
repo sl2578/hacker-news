@@ -1,44 +1,43 @@
 package branch.hackernews.RetrieveFromAPI;
 
-import android.text.format.DateUtils;
-import android.widget.TextView;
+import android.app.Activity;
+import android.os.AsyncTask;
+import android.util.Log;
 
-import java.lang.ref.WeakReference;
+import java.io.IOException;
 
-import branch.hackernews.AppState;
 import branch.hackernews.JSONObject.User;
-import branch.hackernews.R;
-import branch.hackernews.Utils;
+import branch.hackernews.api.HackerRankAPIInterface;
 import branch.hackernews.pages.ViewUser;
+import retrofit2.Call;
 
-public class RetrieveUserTask extends RetrieveFromAPITask<User> {
-    private WeakReference<ViewUser> viewUserWeakReference;
+public class RetrieveUserTask extends AsyncTask<String, Void, User> {
+    private final String TAG = RetrieveUserTask.class.getName();
 
-    public RetrieveUserTask(AppState appState, ViewUser viewUser) {
-        super(appState);
-        viewUserWeakReference = new WeakReference<>(viewUser);
+    private final HackerRankAPIInterface apiService;
+    private final Activity parentActivity;
+
+    public RetrieveUserTask(ViewUser viewUserActivity,
+                            HackerRankAPIInterface apiService) {
+        this.apiService = apiService;
+        this.parentActivity = viewUserActivity;
+    }
+
+    @Override
+    protected User doInBackground(String... user) {
+        String username = user[0];
+        try {
+            Log.i(TAG, "Retrieving data for " + username);
+            Call<User> call = apiService.getUser(username);
+            return call.execute().body();
+        } catch (IOException e) {
+            Log.w(TAG, "Failed to get user " + username);
+            return null;
+        }
     }
 
     @Override
     protected void onPostExecute(User user) {
-        ViewUser viewUser = viewUserWeakReference.get();
-        if (viewUser == null) {
-            // TODO: Log error
-        }
-        TextView user_name = viewUser.findViewById(R.id.user);
-        TextView created_date = viewUser.findViewById(R.id.created_date);
-        TextView karma_points = viewUser.findViewById(R.id.karma_points);
-        TextView about = viewUser.findViewById(R.id.about);
-
-        user_name.setText(user.getId());
-        created_date.setText(Utils.timeSince(
-                DateUtils.SECOND_IN_MILLIS * user.getCreated(), System.currentTimeMillis()));
-        karma_points.setText(String.valueOf(user.getKarma()));
-        about.setText(user.getAbout());
-    }
-
-    @Override
-    protected Class<User> getRetrievedClass() {
-        return User.class;
+        ((ViewUser) parentActivity).setTextView(user);
     }
 }

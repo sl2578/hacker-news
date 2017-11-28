@@ -15,13 +15,13 @@ import branch.hackernews.api.HackerRankAPIInterface;
 import retrofit2.Call;
 
 public class RetrieveNewsStoryTask extends AsyncTask<Void, Void, Map<Integer, Story>> {
-    public final String TAG = RetrieveNewsStoryTask.class.getName();
+    private final String TAG = RetrieveNewsStoryTask.class.getName();
 
-    Activity mainActivity;
-    private List<Integer> topStoryIds;
-    private int offset;
+    private final Activity mainActivity;
+    private final List<Integer> topStoryIds;
+    private final int offset;
+    private final HackerRankAPIInterface apiService;
     private int maxLoadSize = 15;
-    private HackerRankAPIInterface apiService;
 
     public RetrieveNewsStoryTask(HackerNews hackerNews,
                                  List<Integer> topStoryIds,
@@ -36,19 +36,19 @@ public class RetrieveNewsStoryTask extends AsyncTask<Void, Void, Map<Integer, St
 
     @Override
     protected Map<Integer, Story> doInBackground(Void... params) {
-        Map<Integer, Story> storyJsons = new HashMap<>();
+        Map<Integer, Story> storyMap = new HashMap<>();
         int upperLimit =  Math.min(offset + maxLoadSize, topStoryIds.size());
 
         for (final int storyId : topStoryIds.subList(offset, upperLimit)) {
             try {
-                storyJsons.put(storyId, retrieveNewsStory(storyId));
+                storyMap.put(storyId, retrieveNewsStory(storyId));
             } catch (IOException e) {
                 Log.w(TAG, "Unable to retrieve story from HackerNews API: "
                         + storyId);
             }
         }
 
-        return storyJsons;
+        return storyMap;
     }
 
     @Override

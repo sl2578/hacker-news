@@ -10,6 +10,8 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface HackerRankAPIInterface {
+    String BASE_URL = "https://hacker-news.firebaseio.com/v0/";
+
     @GET("topstories.json")
     Call<List<Integer>> getTopStories();
 
@@ -20,6 +22,6 @@ public interface HackerRankAPIInterface {
     Call<Comment> getComment(@Path("id") int id);
 
     @GET("user/{id}.json")
-    Call<User> getUser(@Path("id") int id);
+    Call<User> getUser(@Path("id") String id);
 
 }

@@ -28,18 +28,13 @@ import branch.hackernews.pages.ViewNewsPage;
 import branch.hackernews.pages.ViewUser;
 
 public class HackerNews extends AppCompatActivity {
-    public final String TAG = HackerNews.class.getName();
-
-    public final static String TOP_STORY_URL =
-            "https://hacker-news.firebaseio.com/v0/topstories.json";
-    public final static String GET_STORY_URL =
-            "https://hacker-news.firebaseio.com/v0/item/%d.json";
+    private final String TAG = HackerNews.class.getName();
 
     private ExpandableListView expandableListView;
     private NewsAdapter newsAdapter;
 
     // Complete list of top story ids from HackerNews
-    private List<Integer> topStoryIds;
+    private List<Integer> topStoryIds = new ArrayList<>();
     // List of stories to display
     private List<Story> topStories;
     // Expanded story list view text
@@ -61,10 +56,9 @@ public class HackerNews extends AppCompatActivity {
         initializeNewsInfoText();
 
         Log.i(TAG, "Retrieving top stories from Hacker News");
-        apiService = HackerRankAPIClient
-                .getClient().create(HackerRankAPIInterface.class);
+        apiService = HackerRankAPIClient.getClient();
         try {
-            topStoryIds = new RetrieveTopStoriesTask(TOP_STORY_URL, apiService)
+            topStoryIds = new RetrieveTopStoriesTask(apiService)
                     .execute().get();
         } catch (InterruptedException e) {
             // TODO: handle this
@@ -161,19 +155,19 @@ public class HackerNews extends AppCompatActivity {
         storyInfoText.add("View Comments");
     }
 
-
     /**
      * Given a map of story id to json,
      * @param stories
      */
     public void loadStories(Map<Integer, Story> stories) {
         int numStories = stories.size();
-        Log.d(TAG, String.format("Loading stories to view, %s retrieved: %s", numStories));
+        Log.d(TAG, String.format("Loading stories to view, %s retrieved",
+                numStories));
         offset += numStories;
-        for (Map.Entry<Integer, Story> storyJson : stories.entrySet()) {
-            Story story = storyJson.getValue();
+        for (Map.Entry<Integer, Story> storyEntry : stories.entrySet()) {
+            Story story = storyEntry.getValue();
             topStories.add(story);
-            storyInfo.put(storyJson.getKey(), storyInfoText);
+            storyInfo.put(storyEntry.getKey(), storyInfoText);
         }
 
         Log.i(TAG, "Top news stories retrieved, displaying " + topStories.size());
