@@ -6,15 +6,19 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
     private int currentFirstVisibleItem, currentVisibleItemCount, currentTotalItemCount;
     private int scrollThreshold = 2;
     private int currentScrollState;
+    private boolean isLoading = true;
 
     @Override
     public void onScroll(AbsListView absListView,
                          int firstVisibleItem,
                          int visibleItemCount,
                          int totalItemCount) {
-        this.currentFirstVisibleItem = firstVisibleItem;
+        if (isLoading && totalItemCount > currentTotalItemCount) {
+            isLoading = false;
+            this.currentTotalItemCount = totalItemCount;
+        }
         this.currentVisibleItemCount = visibleItemCount;
-        this.currentTotalItemCount = totalItemCount;
+        this.currentFirstVisibleItem = firstVisibleItem;
     }
 
     @Override
@@ -27,8 +31,9 @@ public abstract class InfiniteScrollListener implements AbsListView.OnScrollList
         if (scrollThreshold + currentFirstVisibleItem
                 + currentVisibleItemCount >= currentTotalItemCount) {
             if (this.currentVisibleItemCount > 0
-                    && this.currentScrollState == SCROLL_STATE_IDLE) {
-                loadMore(currentFirstVisibleItem, currentTotalItemCount);
+                    && this.currentScrollState == SCROLL_STATE_IDLE
+                    && !isLoading) {
+                isLoading = loadMore(currentFirstVisibleItem, currentTotalItemCount);
             }
         }
     }
