@@ -9,7 +9,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-public interface HackerRankAPIInterface {
+public interface HackerNewsAPIInterface {
     String BASE_URL = "https://hacker-news.firebaseio.com/v0/";
 
     @GET("topstories.json")

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -15,14 +16,18 @@ import java.util.Map;
 import branch.hackernews.JSONObject.Comment;
 import branch.hackernews.R;
 import branch.hackernews.Utils;
+import branch.hackernews.pages.ViewComments;
 
+/**
+ * Adapter class for {@link ViewComments} to display the {@link Comment} objects
+ * in an {@link ExpandableListView}
+ */
 public class CommentsAdapter extends BaseExpandableListAdapter {
-    public final String TAG = CommentsAdapter.class.getName();
 
-    private Context context;
-    private List<Comment> comments;
-    private Map<Integer, String> commentResponses;
-    private LayoutInflater layoutInflater;
+    private final Context context;
+    private final List<Comment> comments;
+    private final Map<Integer, String> commentResponses;
+    private final LayoutInflater layoutInflater;
 
     public CommentsAdapter(Context context,
                            List<Comment> comments,
@@ -39,22 +44,20 @@ public class CommentsAdapter extends BaseExpandableListAdapter {
                              boolean isExpanded,
                              View convertView,
                              ViewGroup parent) {
-        Comment comment = (Comment) getGroup(groupPosition);
+        final Comment comment = (Comment) getGroup(groupPosition);
 
-        if (isExpanded) {
-            convertView = layoutInflater.inflate(R.layout.comments_row_full, null);
-        }
-        else {
-            convertView = layoutInflater.inflate(R.layout.comments_row_shortened, null);
-        }
+        int layout = isExpanded ?
+                R.layout.comments_row_full : R.layout.comments_row_short;
+        convertView = layoutInflater.inflate(layout, parent, false);
 
         TextView user = convertView.findViewById(R.id.user);
         TextView created_date = convertView.findViewById(R.id.date);
         TextView comment_text = convertView.findViewById(R.id.comment_text);
 
         user.setText(comment.getBy());
-        created_date.setText(Utils.timeSince(
-                DateUtils.SECOND_IN_MILLIS * comment.getTime(), System.currentTimeMillis()));
+        created_date.setText(
+                Utils.timeSince(DateUtils.SECOND_IN_MILLIS * comment.getTime(),
+                        System.currentTimeMillis()));
         if (comment.getText() != null) {
             comment_text.setText(Html.fromHtml(comment.getText()));
         }
@@ -75,19 +78,6 @@ public class CommentsAdapter extends BaseExpandableListAdapter {
         }
         TextView viewMoreText = convertView.findViewById(R.id.comment_info);
         viewMoreText.setText(childText);
-
-//        final AppState appState = new AppState()
-//                .setView(convertView)
-//                .setIdsList(Collections.singletonList(comment.getKids().get(childPosition)))
-//                .setContext(this.context);
-
-//        try {
-//            new RetrieveCommentRepliesTask(appState, convertView).execute(HackerNews.GET_STORY_URL).get();
-//        } catch (InterruptedException e) {
-//            Log.e(TAG, "Interrupted while retrieving comment replies for " + comment.getId());
-//        } catch (ExecutionException e) {
-//            Log.e(TAG, "Error while retrieving comment replies for " + comment.getId(), e);
-//        }
 
         return convertView;
 

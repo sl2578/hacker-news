@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import branch.hackernews.JSONObject.Comment;
-import branch.hackernews.api.HackerRankAPIInterface;
+import branch.hackernews.api.HackerNewsAPIInterface;
 import branch.hackernews.pages.ViewComments;
 import retrofit2.Call;
 
@@ -19,11 +19,11 @@ public class RetrieveCommentsTask extends AsyncTask<Void, Void, Map<Integer, Com
 
     private final Activity parentActivity;
     private final List<Integer> commentIds;
-    private final HackerRankAPIInterface apiService;
+    private final HackerNewsAPIInterface apiService;
 
 
     public RetrieveCommentsTask(ViewComments viewCommentsActivity,
-                                HackerRankAPIInterface apiService,
+                                HackerNewsAPIInterface apiService,
                                 List<Integer> commentIds) {
         this.parentActivity = viewCommentsActivity;
         this.apiService = apiService;

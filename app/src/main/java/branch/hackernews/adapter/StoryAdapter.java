@@ -7,42 +7,48 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import java.util.List;
 import java.util.Map;
 
+import branch.hackernews.HackerNews;
 import branch.hackernews.JSONObject.Story;
 import branch.hackernews.R;
 import branch.hackernews.Utils;
 
-public class NewsAdapter extends BaseExpandableListAdapter {
-    private Context context;
-    private LayoutInflater layoutInflater;
-    private List<Story> storyRow;
-    private Map<Integer, List<String>> newsInfo;
+/**
+ * Adapter class for {@link HackerNews} to display the {@link Story} objects
+ * in an {@link ExpandableListView}
+ */
+public class StoryAdapter extends BaseExpandableListAdapter {
+    private final Context context;
+    private final LayoutInflater layoutInflater;
+    private final List<Story> storyRow;
+    private final Map<Integer, List<String>> storiesInfo;
 
 
-    public NewsAdapter(Context context,
-                       List<Story> storyRow,
-                       Map<Integer, List<String>> newsInfo) {
+    public StoryAdapter(Context context,
+                        List<Story> storyRow,
+                        Map<Integer, List<String>> storiesInfo) {
         this.context = context;
         this.storyRow = storyRow;
-        this.newsInfo = newsInfo;
+        this.storiesInfo = storiesInfo;
         this.layoutInflater = (LayoutInflater)
                 this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    static class GroupViewHolder {
-        public TextView title;
-        public TextView score;
-        public TextView user;
-        public TextView date;
-        public TextView descendants;
+    private static class GroupViewHolder {
+        private TextView title;
+        private TextView score;
+        private TextView user;
+        private TextView date;
+        private TextView descendants;
     }
 
-    static class ChildViewHolder {
-        public TextView viewReplies;
+    private static class ChildViewHolder {
+        private TextView viewReplies;
     }
 
     @Override
@@ -50,7 +56,7 @@ public class NewsAdapter extends BaseExpandableListAdapter {
                              boolean isExpanded,
                              View convertView,
                              ViewGroup parent) {
-        Story story = (Story) getGroup(groupPosition);
+        final Story story = (Story) getGroup(groupPosition);
 
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.news_row, null);
@@ -103,7 +109,7 @@ public class NewsAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.newsInfo.get(this.storyRow.get(groupPosition).getId()).size();
+        return this.storiesInfo.get(this.storyRow.get(groupPosition).getId()).size();
     }
 
     @Override
@@ -113,7 +119,7 @@ public class NewsAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return this.newsInfo.get(this.storyRow.get(groupPosition).getId()).get(childPosition);
+        return this.storiesInfo.get(this.storyRow.get(groupPosition).getId()).get(childPosition);
     }
 
     @Override
@@ -136,14 +142,3 @@ public class NewsAdapter extends BaseExpandableListAdapter {
         return true;
     }
 }
-
-//
-//    @Override
-//    public View getView(int i, View view, ViewGroup viewGroup) {
-//        View rowView = layoutInflater.inflate(R.layout.news_row, viewGroup, false);
-//        TextView title = rowView.findViewById(R.id.title);
-//        TextView text = rowView.findViewById(R.id.text);
-//        title.setText(storyRow.get(i).getTitle());
-//        text.setText(storyRow.get(i).getAuthor());
-//        return rowView;
-//    }

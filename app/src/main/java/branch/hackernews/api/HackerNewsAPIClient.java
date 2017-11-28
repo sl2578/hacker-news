@@ -7,20 +7,20 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class HackerRankAPIClient {
-    private static HackerRankAPIInterface hackerRankAPIInterface = null;
+public class HackerNewsAPIClient {
+    private static HackerNewsAPIInterface hackerNewsAPIInterface = null;
 
-    public static HackerRankAPIInterface getClient() {
-        if (hackerRankAPIInterface==null) {
+    public static HackerNewsAPIInterface getClient() {
+        if (hackerNewsAPIInterface ==null) {
             final OkHttpClient client = new OkHttpClient();
             final Retrofit retrofit = new Retrofit.Builder()
                     .callbackExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-                    .baseUrl(HackerRankAPIInterface.BASE_URL)
+                    .baseUrl(HackerNewsAPIInterface.BASE_URL)
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
-            hackerRankAPIInterface = retrofit.create(HackerRankAPIInterface.class);
+            hackerNewsAPIInterface = retrofit.create(HackerNewsAPIInterface.class);
         }
-        return hackerRankAPIInterface;
+        return hackerNewsAPIInterface;
     }
 }

@@ -7,18 +7,18 @@ import android.util.Log;
 import java.io.IOException;
 
 import branch.hackernews.JSONObject.User;
-import branch.hackernews.api.HackerRankAPIInterface;
+import branch.hackernews.api.HackerNewsAPIInterface;
 import branch.hackernews.pages.ViewUser;
 import retrofit2.Call;
 
 public class RetrieveUserTask extends AsyncTask<String, Void, User> {
     private final String TAG = RetrieveUserTask.class.getName();
 
-    private final HackerRankAPIInterface apiService;
+    private final HackerNewsAPIInterface apiService;
     private final Activity parentActivity;
 
     public RetrieveUserTask(ViewUser viewUserActivity,
-                            HackerRankAPIInterface apiService) {
+                            HackerNewsAPIInterface apiService) {
         this.apiService = apiService;
         this.parentActivity = viewUserActivity;
     }

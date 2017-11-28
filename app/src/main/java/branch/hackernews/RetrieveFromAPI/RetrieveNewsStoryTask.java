@@ -11,7 +11,7 @@ import java.util.Map;
 
 import branch.hackernews.HackerNews;
 import branch.hackernews.JSONObject.Story;
-import branch.hackernews.api.HackerRankAPIInterface;
+import branch.hackernews.api.HackerNewsAPIInterface;
 import retrofit2.Call;
 
 public class RetrieveNewsStoryTask extends AsyncTask<Void, Void, Map<Integer, Story>> {
@@ -20,13 +20,13 @@ public class RetrieveNewsStoryTask extends AsyncTask<Void, Void, Map<Integer, St
     private final Activity mainActivity;
     private final List<Integer> topStoryIds;
     private final int offset;
-    private final HackerRankAPIInterface apiService;
+    private final HackerNewsAPIInterface apiService;
     private int maxLoadSize = 15;
 
     public RetrieveNewsStoryTask(HackerNews hackerNews,
                                  List<Integer> topStoryIds,
                                  int offset,
-                                 HackerRankAPIInterface apiService) {
+                                 HackerNewsAPIInterface apiService) {
         super();
         this.mainActivity = hackerNews;
         this.topStoryIds = topStoryIds;
@@ -37,7 +37,7 @@ public class RetrieveNewsStoryTask extends AsyncTask<Void, Void, Map<Integer, St
     @Override
     protected Map<Integer, Story> doInBackground(Void... params) {
         Map<Integer, Story> storyMap = new HashMap<>();
-        int upperLimit =  Math.min(offset + maxLoadSize, topStoryIds.size());
+        final int upperLimit =  Math.min(offset + maxLoadSize, topStoryIds.size());
 
         for (final int storyId : topStoryIds.subList(offset, upperLimit)) {
             try {

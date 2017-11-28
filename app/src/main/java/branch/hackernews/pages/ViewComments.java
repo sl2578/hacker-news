@@ -15,18 +15,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import branch.hackernews.HackerNews;
 import branch.hackernews.JSONObject.Comment;
 import branch.hackernews.R;
 import branch.hackernews.RetrieveFromAPI.RetrieveCommentsTask;
 import branch.hackernews.adapter.CommentsAdapter;
-import branch.hackernews.api.HackerRankAPIClient;
-import branch.hackernews.api.HackerRankAPIInterface;
+import branch.hackernews.api.HackerNewsAPIClient;
+import branch.hackernews.api.HackerNewsAPIInterface;
 
-
+/**
+ * Activity containing {@link ExpandableListView} of {@link Comment} objects.
+ * Called by either {@link HackerNews} or itself to load comments associated
+ * with the Hacker News API items (i.e. Story, Comments)
+ */
 public class ViewComments extends AppCompatActivity {
     private final String TAG = ViewComments.class.getName();
 
-    ExpandableListView expandableListView;
+    private ExpandableListView expandableListView;
     private CommentsAdapter commentsAdapter;
 
     private List<Integer> commentIds;
@@ -34,26 +39,35 @@ public class ViewComments extends AppCompatActivity {
     private Map<Integer, String> commentResponses;
     private String title;
 
-    private HackerRankAPIInterface apiService;
+    private HackerNewsAPIInterface apiService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_comments);
 
-        apiService = HackerRankAPIClient.getClient();
+        apiService = HackerNewsAPIClient.getClient();
 
+        // Get intent as sent from either HackerNews or ViewComments
         Intent intent = getIntent();
-        title = intent.getStringExtra("title");
+        title = intent.getStringExtra(HackerNews.TITLE_FIELD);
         setTitle(title);
-        commentIds = intent.getIntegerArrayListExtra("comments");
+        commentIds = intent.getIntegerArrayListExtra(HackerNews.COMMENTS_FIELD);
 
         expandableListView = findViewById(R.id.comments_list);
         setListAdapterView();
+
+        Log.i(TAG, String.format("Retrieving %s comments for %s",
+                commentIds.size(), title));
         getCommentsFromHackerNews();
 
         expandableListView.setOnChildClickListener(onChildClickListener());
     }
 
+    /**
+     * Clicking on "View Replies" for comment object will load
+     * a new comments page with the comment's children
+     * @return true if child click is successful
+     */
     private OnChildClickListener onChildClickListener() {
         final Context context = this;
         return new OnChildClickListener() {
@@ -68,15 +82,18 @@ public class ViewComments extends AppCompatActivity {
                 Log.i(TAG, "Showing comments for " + comment.getId());
 
                 Intent intent = new Intent(context, ViewComments.class);
-                intent.putIntegerArrayListExtra("comments",
+                intent.putIntegerArrayListExtra(HackerNews.COMMENTS_FIELD,
                         (ArrayList<Integer>) comment.getKids());
-                intent.putExtra("title", title);
+                intent.putExtra(HackerNews.TITLE_FIELD, title);
                 startActivity(intent);
                 return true;
             }
         };
     }
 
+    /**
+     * Initialize comments and commentResponses and create an initial adapter
+     */
     private void setListAdapterView() {
         comments = new ArrayList<>();
         commentResponses = new HashMap<>();
@@ -84,12 +101,21 @@ public class ViewComments extends AppCompatActivity {
         expandableListView.setAdapter(commentsAdapter);
     }
 
+    /**
+     * Call AsyncTask to retrieve comments by list of ids
+     */
     public void getCommentsFromHackerNews() {
         new RetrieveCommentsTask(this, apiService, commentIds).execute();
     }
 
+    /**
+     * Called by {@link RetrieveCommentsTask} to load the comments object and
+     * a string that indicates whether a comment has a reply into the
+     * {@link CommentsAdapter}
+     * @param commentsMap map containing comment id as key and comments object
+     */
     public void loadComments(Map<Integer, Comment> commentsMap) {
-        int numComments = commentsMap.size();
+        final int numComments = commentsMap.size();
         Log.i(TAG, String.format("Loading comments to view, %s retrieved",
                 numComments));
         for (Entry<Integer, Comment> commentEntry : commentsMap.entrySet()) {

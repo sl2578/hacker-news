@@ -11,6 +11,7 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +21,9 @@ import branch.hackernews.JSONObject.Story;
 import branch.hackernews.RetrieveFromAPI.RetrieveNewsStoryTask;
 import branch.hackernews.RetrieveFromAPI.RetrieveTopStoriesTask;
 import branch.hackernews.adapter.InfiniteScrollListener;
-import branch.hackernews.adapter.NewsAdapter;
-import branch.hackernews.api.HackerRankAPIClient;
-import branch.hackernews.api.HackerRankAPIInterface;
+import branch.hackernews.adapter.StoryAdapter;
+import branch.hackernews.api.HackerNewsAPIClient;
+import branch.hackernews.api.HackerNewsAPIInterface;
 import branch.hackernews.pages.ViewComments;
 import branch.hackernews.pages.ViewNewsPage;
 import branch.hackernews.pages.ViewUser;
@@ -30,8 +31,13 @@ import branch.hackernews.pages.ViewUser;
 public class HackerNews extends AppCompatActivity {
     private final String TAG = HackerNews.class.getName();
 
+    public final static String TITLE_FIELD = "title";
+    public final static String URL_FIELD = "url";
+    public final static String USER_FIELD = "user";
+    public final static String COMMENTS_FIELD = "comments";
+
     private ExpandableListView expandableListView;
-    private NewsAdapter newsAdapter;
+    private StoryAdapter storyAdapter;
 
     // Complete list of top story ids from HackerNews
     private List<Integer> topStoryIds = new ArrayList<>();
@@ -44,7 +50,7 @@ public class HackerNews extends AppCompatActivity {
     // Three options for view more
     private List<String> storyInfoText;
 
-    private HackerRankAPIInterface apiService;
+    private HackerNewsAPIInterface apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,20 +62,11 @@ public class HackerNews extends AppCompatActivity {
         initializeNewsInfoText();
 
         Log.i(TAG, "Retrieving top stories from Hacker News");
-        apiService = HackerRankAPIClient.getClient();
-        try {
-            topStoryIds = new RetrieveTopStoriesTask(apiService)
-                    .execute().get();
-        } catch (InterruptedException e) {
-            // TODO: handle this
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        apiService = HackerNewsAPIClient.getClient();
+        topStoryIds = getTopStoriesFromHackerNews();
 
-        Log.i(TAG, String.format(
-                "Completed retrieval of top story ids %s, loading story data",
-                topStoryIds.size()));
+        Log.i(TAG, String.format("Completed retrieval of top story ids %s, " +
+                        "loading story data", topStoryIds.size()));
         expandableListView = findViewById(R.id.news_list);
         setListAdapterView();
         getStoryFromHackerNews();
@@ -89,30 +86,29 @@ public class HackerNews extends AppCompatActivity {
                 final String selectedChild = (String) expandableListView
                         .getExpandableListAdapter()
                         .getChild(groupPosition, childPosition);
-                Story selectedNews = topStories.get(groupPosition);
+                final Story selectedNews = topStories.get(groupPosition);
                 Intent intent = null;
                 switch(selectedChild) {
                     case "View Article":
                         Log.i(TAG, "Opening story in browser: "
                                 + selectedNews.getTitle());
                         intent = new Intent(context, ViewNewsPage.class);
-                        // TODO: replace hardcoded name with variable
-                        intent.putExtra("title", selectedNews.getTitle());
-                        intent.putExtra("url", selectedNews.getUrl());
+                        intent.putExtra(TITLE_FIELD, selectedNews.getTitle());
+                        intent.putExtra(URL_FIELD, selectedNews.getUrl());
                         break;
                     case "View User":
                         Log.i(TAG, "View user info: "
                                 + selectedNews.getUser());
                         intent = new Intent(context, ViewUser.class);
-                        intent.putExtra("user", selectedNews.getUser());
+                        intent.putExtra(USER_FIELD, selectedNews.getUser());
                         break;
                     case "View Comments":
                         Log.i(TAG, "View comments for "
                                 + selectedNews.getTitle());
                         intent = new Intent(context, ViewComments.class);
-                        intent.putIntegerArrayListExtra("comments",
+                        intent.putIntegerArrayListExtra(COMMENTS_FIELD,
                                 (ArrayList<Integer>) selectedNews.getKids());
-                        intent.putExtra("title", selectedNews.getTitle());
+                        intent.putExtra(TITLE_FIELD, selectedNews.getTitle());
                         break;
                 }
                 startActivity(intent);
@@ -135,16 +131,23 @@ public class HackerNews extends AppCompatActivity {
     private void setListAdapterView() {
         topStories = new ArrayList<>();
         storyInfo = new HashMap<>();
-        newsAdapter = new NewsAdapter(this, topStories, storyInfo);
-        expandableListView.setAdapter(newsAdapter);
+        storyAdapter = new StoryAdapter(this, topStories, storyInfo);
+        expandableListView.setAdapter(storyAdapter);
+    }
+
+    public List<Integer> getTopStoriesFromHackerNews() {
+        try {
+            return new RetrieveTopStoriesTask(apiService).execute().get();
+        } catch (InterruptedException e) {
+            Log.w(TAG, "Interrupted while retrieving top stories", e);
+        } catch (ExecutionException e) {
+            Log.e(TAG, "Error while retrieving top stories", e);
+        }
+        return Collections.emptyList();
     }
 
     public void getStoryFromHackerNews() {
-        new RetrieveNewsStoryTask(
-                this,
-                topStoryIds,
-                offset,
-                apiService)
+        new RetrieveNewsStoryTask(this, topStoryIds, offset, apiService)
                 .execute();
     }
 
@@ -152,7 +155,6 @@ public class HackerNews extends AppCompatActivity {
         storyInfoText = new ArrayList<>();
         storyInfoText.add("View Article");
         storyInfoText.add("View User");
-        storyInfoText.add("View Comments");
     }
 
     /**
@@ -160,18 +162,25 @@ public class HackerNews extends AppCompatActivity {
      * @param stories
      */
     public void loadStories(Map<Integer, Story> stories) {
-        int numStories = stories.size();
+        final int numStories = stories.size();
         Log.d(TAG, String.format("Loading stories to view, %s retrieved",
                 numStories));
         offset += numStories;
         for (Map.Entry<Integer, Story> storyEntry : stories.entrySet()) {
             Story story = storyEntry.getValue();
+            List<String> infoText = new ArrayList<>(storyInfoText);
+
+            // Only add View Comments option if story has comments
+            if (story.getNumDescendants() > 0) {
+                infoText.add("View Comments");
+            }
+
             topStories.add(story);
-            storyInfo.put(storyEntry.getKey(), storyInfoText);
+            storyInfo.put(storyEntry.getKey(), infoText);
         }
 
         Log.i(TAG, "Top news stories retrieved, displaying " + topStories.size());
-        newsAdapter.notifyDataSetChanged();
+        storyAdapter.notifyDataSetChanged();
 
     }
 }

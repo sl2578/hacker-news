@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="User"
+        android:layout_marginLeft="16dp"
         android:textColor="@android:color/black"
         android:textSize="30sp"
         android:textStyle="bold"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/created"
+        android:id="@+id/created_field"
         android:layout_width="wrap_content"
         android:layout_height="19dp"
         android:layout_marginLeft="16dp"
@@ -32,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@+id/user" />
 
     <TextView
-        android:id="@+id/karma"
+        android:id="@+id/karma_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -40,10 +40,10 @@
         android:layout_marginTop="8dp"
         android:text="@string/karma_field"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/created" />
+        app:layout_constraintTop_toBottomOf="@+id/created_field" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/about_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -51,7 +51,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/about_field"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/karma" />
+        app:layout_constraintTop_toBottomOf="@+id/karma_field" />
 
     <TextView
         android:id="@+id/created_date"
@@ -60,9 +60,8 @@
         android:layout_marginLeft="148dp"
         android:layout_marginStart="68dp"
         android:layout_marginTop="32dp"
-        android:text="created_date"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/created"
+        app:layout_constraintStart_toEndOf="@+id/created_field"
         app:layout_constraintTop_toBottomOf="@+id/user" />
 
     <TextView
@@ -71,17 +70,20 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="80dp"
         android:layout_marginTop="8dp"
-        android:text="karma_points"
-        app:layout_constraintStart_toEndOf="@+id/karma"
+        android:layout_marginLeft="80dp"
+        app:layout_constraintStart_toEndOf="@+id/karma_field"
         app:layout_constraintTop_toBottomOf="@+id/created_date" />
 
     <TextView
         android:id="@+id/about"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="8dp"
-        android:text="About Text"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
+        android:ellipsize="none"
+        android:scrollHorizontally="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/about_field"
         app:layout_constraintTop_toBottomOf="@+id/karma_points" />
 </android.support.constraint.ConstraintLayout>

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import branch.hackernews.api.HackerRankAPIInterface;
+import branch.hackernews.api.HackerNewsAPIInterface;
 import retrofit2.Call;
 
 /**
@@ -15,11 +15,11 @@ import retrofit2.Call;
  * to store as a Story object
  */
 public class RetrieveTopStoriesTask extends AsyncTask<Void, Void, List<Integer>> {
-    public final String TAG = RetrieveTopStoriesTask.class.getName();
+    private final String TAG = RetrieveTopStoriesTask.class.getName();
 
-    private final HackerRankAPIInterface apiService;
+    private final HackerNewsAPIInterface apiService;
 
-    public RetrieveTopStoriesTask(HackerRankAPIInterface apiService) {
+    public RetrieveTopStoriesTask(HackerNewsAPIInterface apiService) {
         this.apiService = apiService;
     }
 
